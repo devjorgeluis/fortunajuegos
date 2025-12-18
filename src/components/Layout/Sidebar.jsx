@@ -1,120 +1,50 @@
-import { useState, useEffect, useContext } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect, useContext, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { LayoutContext } from "./LayoutContext";
 import { AppContext } from "../../AppContext";
 import { callApi } from "../../utils/Utils";
-import ImgLogo from "/src/assets/svg/logo-desktop.svg";
+import ImgCasino from "/src/assets/svg/casino.svg";
+import ImgLiveCasino from "/src/assets/svg/live-casino.svg";
+import ImgSports from "/src/assets/svg/sports.svg";
 
 const Sidebar = ({ isSlotsOnly, isMobile }) => {
     const { isSidebarExpanded, toggleSidebar } = useContext(LayoutContext);
     const { contextData } = useContext(AppContext);
-    const navigate = useNavigate();
     const location = useLocation();
-    const isSportsPage = location.pathname === "/sports" || location.pathname === "/live-sports";
-    const [expandedMenus, setExpandedMenus] = useState([""]);
-    const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
-    const [currentLanguage, setCurrentLanguage] = useState({ code: "es", name: "Spanish" });
+
+    const [expandedMenus, setExpandedMenus] = useState([]);
     const [liveCasinoMenus, setLiveCasinoMenus] = useState([]);
     const [hasFetchedLiveCasino, setHasFetchedLiveCasino] = useState(false);
     const [activeSubmenuItem, setActiveSubmenuItem] = useState("");
-    const [countdown, setCountdown] = useState({
-        days: 1,
-        hours: 5,
-        minutes: 8,
-        seconds: 25
-    });
+    const [hoveredMenu, setHoveredMenu] = useState(null);
+    const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
+    const [isPopoverVisible, setIsPopoverVisible] = useState(false);
 
-    const languages = [
-        { code: "en", name: "English" },
-        { code: "de", name: "German" },
-        { code: "ja", name: "Japanese" },
-        { code: "fr", name: "French" },
-        { code: "nl", name: "Dutch" },
-        { code: "pt", name: "Portuguese" },
-        { code: "tr", name: "Turkish" },
-        { code: "es", name: "Spanish" },
-        { code: "ko", name: "Korean" },
-        { code: "it", name: "Italian" },
-        { code: "el", name: "Greek" },
-        { code: "ar", name: "Arabic" },
-        { code: "zh", name: "Chinese" },
-        { code: "cs", name: "Czech" }
-    ];
+    const iconRefs = useRef({});
+    const popoverRef = useRef(null);
+    const hoverTimeoutRef = useRef(null);
 
-    const toggleMenu = (menuName) => {
-        setExpandedMenus(prev =>
-            prev.includes(menuName)
-                ? prev.filter(item => item !== menuName)
-                : [...prev, menuName]
+    const toggleMenu = (menuId) => {
+        if (!isSidebarExpanded) return;
+        setExpandedMenus((prev) =>
+            prev.includes(menuId)
+                ? prev.filter((item) => item !== menuId)
+                : [...prev, menuId]
         );
     };
 
-    const isMenuExpanded = (menuName) => {
-        return expandedMenus.includes(menuName);
-    };
-
-    const toggleLanguageDropdown = () => {
-        setShowLanguageDropdown(!showLanguageDropdown);
-    };
-
-    const closeLanguageDropdown = () => {
-        setShowLanguageDropdown(false);
-    };
-
-    const handleLanguageSelect = (languageCode) => {
-        var language = languages.find(lang => lang.code === languageCode) || currentLanguage;
-        setCurrentLanguage(language);
-        closeLanguageDropdown();
-    };
-
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCountdown(prevCountdown => {
-                let { days, hours, minutes, seconds } = prevCountdown;
-
-                if (seconds > 0) {
-                    seconds--;
-                } else {
-                    seconds = 59;
-                    if (minutes > 0) {
-                        minutes--;
-                    } else {
-                        minutes = 59;
-                        if (hours > 0) {
-                            hours--;
-                        } else {
-                            hours = 23;
-                            if (days > 0) {
-                                days--;
-                            } else {
-                                days = 1;
-                                hours = 5;
-                                minutes = 8;
-                                seconds = 25;
-                            }
-                        }
-                    }
-                }
-
-                return { days, hours, minutes, seconds };
-            });
-        }, 1000);
-
-        return () => clearInterval(timer);
-    }, []);
+    const isMenuExpanded = (menuId) => expandedMenus.includes(menuId);
 
     useEffect(() => {
         if (!hasFetchedLiveCasino) {
             getPage("livecasino");
         }
 
-        const hash = location.hash;
-        if (hash && hash.startsWith('#')) {
-            const categoryCode = hash.substring(1);
-            setActiveSubmenuItem(categoryCode);
-            
-            if (location.pathname === '/live-casino' && !expandedMenus.includes('live-casino')) {
-                setExpandedMenus(prev => [...prev, 'live-casino']);
+        const hash = location.hash.slice(1);
+        if (hash) {
+            setActiveSubmenuItem(hash);
+            if (location.pathname === "/live-casino" && !isMenuExpanded("live-casino")) {
+                toggleMenu("live-casino");
             }
         } else {
             setActiveSubmenuItem("");
@@ -124,261 +54,305 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
     }, [location.pathname, location.hash, hasFetchedLiveCasino]);
 
     const getPage = (page) => {
-        callApi(contextData, "GET", "/get-page?page=" + page, callbackGetPage, null);
+        callApi(contextData, "GET", `/get-page?page=${page}`, callbackGetPage, null);
     };
 
     const callbackGetPage = (result) => {
-        if (result.status === 500 || result.status === 422) {
+        if (result.status === 500 || result.status === 422) return;
 
-        } else {
-            let menus = [{
-                name: "Home",
-                code: "home",
-                id: null,
-                table_name: null,
-                href: "/live-casino#home"
-            }];
-            result.data.categories.forEach(element => {
-                menus.push({
-                    name: element.name,
-                    icon: element.image_local != null && element.image_local !== ""  && contextData.cdnUrl + element.image_local,
-                    href: "/live-casino#" + element.code
-                })
+        const menus = [
+            { name: "Inicio", code: "home", href: "/live-casino#home" },
+        ];
+
+        result.data.categories.forEach((element) => {
+            menus.push({
+                name: element.name,
+                href: `/live-casino#${element.code}`,
+                code: element.code,
             });
-            setLiveCasinoMenus(menus);
-            setHasFetchedLiveCasino(true);
+        });
+
+        setLiveCasinoMenus(menus);
+        setHasFetchedLiveCasino(true);
+    };
+
+    const handleMouseEnter = (itemId, event) => {
+        if (!isSidebarExpanded) {
+            clearTimeout(hoverTimeoutRef.current);
+            
+            const iconElement = event.currentTarget;
+            const rect = iconElement.getBoundingClientRect();
+            
+            setPopoverPosition({
+                top: rect.top + window.scrollY,
+                left: rect.right + 16,
+            });
+            
+            hoverTimeoutRef.current = setTimeout(() => {
+                setHoveredMenu(itemId);
+                setIsPopoverVisible(true);
+            }, 150);
         }
     };
 
-    const isSlotsOnlyMode = isSlotsOnly === "true" || isSlotsOnly === true;
-
-    const menuItems = !isSlotsOnlyMode ? [
-        {
-            id: 'casino',
-            name: 'Casino',
-            icon: 'custom-icon-bp-casino',
-            href: '/casino',
-            subItems: [
-                { name: 'Lobby', icon: 'custom-icon-bp-home', href: '/casino#home' },
-                { name: 'Hot', icon: 'custom-icon-bp-fire', href: '/casino#hot' },
-                { name: 'Jokers', icon: 'custom-icon-spades', href: '/casino#joker' },
-                { name: 'Juegos de crash', icon: 'custom-icon-scale', href: '/casino#arcade' },
-                { name: 'Megaways', icon: 'custom-icon-bp-megaways', href: '/casino#megaways' },
-                { name: 'Ruletas', icon: 'custom-icon-bingo', href: '/casino#roulette' },
-            ]
-        },
-        {
-            id: 'live-casino',
-            name: 'Casino en Vivo',
-            icon: 'custom-icon-bp-live-casino',
-            href: '/live-casino',
-            subItems: liveCasinoMenus
-        },
-        {
-            id: 'sports',
-            name: 'Deportes',
-            icon: 'custom-icon-bp-sports',
-            href: '/sports',
-            subItems: [
-                { name: 'Home', icon: 'custom-icon-bp-home', href: '/sports' },
-                { name: 'Live', icon: 'custom-icon-bp-live', href: '/live-sports' }
-            ]
+    const handleMouseLeave = (event) => {
+        if (!isSidebarExpanded) {
+            clearTimeout(hoverTimeoutRef.current);
+            
+            // Check if mouse is moving to popover
+            const relatedTarget = event.relatedTarget;
+            const popoverElement = popoverRef.current;
+            
+            if (popoverElement && popoverElement.contains(relatedTarget)) {
+                // Mouse is moving to popover, keep it open
+                return;
+            }
+            
+            hoverTimeoutRef.current = setTimeout(() => {
+                setIsPopoverVisible(false);
+                setHoveredMenu(null);
+            }, 100);
         }
-    ] : [
-        {
-            id: 'casino',
-            name: 'Casino',
-            icon: 'custom-icon-bp-casino',
-            href: '/casino',
-            subItems: [
-                { name: 'Lobby', icon: 'custom-icon-bp-home', href: '/casino#home' },
-                { name: 'Hot', icon: 'custom-icon-bp-fire', href: '/casino#hot' },
-                { name: 'Jokers', icon: 'custom-icon-spades', href: '/casino#joker' },
-                { name: 'Juegos de crash', icon: 'custom-icon-scale', href: '/casino#arcade' },
-                { name: 'Megaways', icon: 'custom-icon-bp-megaways', href: '/casino#megaways' },
-                { name: 'Ruletas', icon: 'custom-icon-bingo', href: '/casino#roulette' },
-            ]
-        }
-    ];
+    };
 
-    const collapsedMenuItems = !isSlotsOnlyMode ? [
-        { name: 'casino', icon: 'custom-icon-bp-casino', href: '/casino' },
-        { name: 'live-casino', icon: 'custom-icon-bp-live-casino', href: '/live-casino' },
-        { name: 'sports', icon: 'custom-icon-bp-sports', href: '/sports' }
-    ] : [
-        { name: 'casino', icon: 'custom-icon-bp-casino', href: '/casino' }
-    ];
+    const handlePopoverMouseEnter = () => {
+        clearTimeout(hoverTimeoutRef.current);
+    };
+
+    const handlePopoverMouseLeave = () => {
+        hoverTimeoutRef.current = setTimeout(() => {
+            setIsPopoverVisible(false);
+            setHoveredMenu(null);
+        }, 100);
+    };
+
+    const isSlotsOnlyMode = isSlotsOnly === true || isSlotsOnly === "true";
+
+    const menuItems = !isSlotsOnlyMode
+        ? [
+              {
+                  id: "casino",
+                  name: "Casino",
+                  image: ImgCasino,
+                  href: "/casino",
+                  subItems: [
+                      { name: "Lobby", href: "/casino#home" },
+                      { name: "Populares", href: "/casino#hot" },
+                      { name: "Jokers", href: "/casino#joker" },
+                      { name: "Juegos de Crash", href: "/casino#arcade" },
+                      { name: "Megaways", href: "/casino#megaways" },
+                      { name: "Ruletas", href: "/casino#roulette" },
+                  ],
+              },
+              {
+                  id: "live-casino",
+                  name: "Casino en Vivo",
+                  image: ImgLiveCasino,
+                  href: "/live-casino",
+                  subItems: liveCasinoMenus,
+              },
+              {
+                  id: "sports",
+                  name: "Deportes",
+                  image: ImgSports,
+                  href: "/sports",
+                  subItems: [
+                      { name: "Inicio", href: "/sports" },
+                      { name: "En Vivo", href: "/live-sports" },
+                  ],
+              },
+          ]
+        : [
+              {
+                  id: "casino",
+                  name: "Casino",
+                  image: ImgCasino,
+                  href: "/casino",
+                  subItems: [
+                      { name: "Lobby", href: "/casino#home" },
+                      { name: "Populares", href: "/casino#hot" },
+                      { name: "Jokers", href: "/casino#joker" },
+                      { name: "Juegos de Crash", href: "/casino#arcade" },
+                      { name: "Megaways", href: "/casino#megaways" },
+                      { name: "Ruletas", href: "/casino#roulette" },
+                  ],
+              },
+          ];
 
     return (
         <>
-            <div className={`menu-layout-sidebar ${isSidebarExpanded ? 'expanded' : 'collapsed'}`}>
-                <div className={`sidemenu-container sidemenu-container-collapsed ${!isSidebarExpanded ? 'active' : ''}`}>
-                    <div className="sidemenu-header collapsed">
-                        <div className="close-button collapsed fixed">
-                            <span
-                                className="hamburger-bars sidemenu-toggle"
-                                onClick={toggleSidebar}
-                                style={{ cursor: 'pointer' }}
-                            >
-                                <span className="material-icons">menu</span>
-                            </span>
-                        </div>
-                    </div>
-                    <div className="content collapsed"></div>
-                    <div className="menu-items menu-items-collapsed">
-                        {collapsedMenuItems.map((item, index) => (
-                            <button
-                                key={index}
-                                className={`nav-link fixed-nav-link ${item.name} ${item.name === 'sports' ? 'active-collapsed' : ''}`}
-                                onClick={() => navigate(item.href)}
-                                aria-current={item.name === 'sports' ? 'page' : undefined}
-                            >
-                                <i className={item.icon}></i>
-                            </button>
-                        ))}
-                    </div>
-                    <div className="menu-divider"></div>
-                    <div className="footer-items footer-items-collapsed"></div>
-                </div>
+            <aside
+                className={`bg-primary-900 text-primary-50 border-theme-secondary/10 z-50 flex h-full flex-col justify-between gap-4 border-r text-base [grid-area:_nav] sticky top-[var(--header-height)] max-h-[calc(100svh-var(--header-height))] min-h-[unset] lg:max-w-[15rem] transition-all duration-300 ${
+                    isSidebarExpanded ? "w-[16rem]" : "w-[4.25rem]"
+                }`}
+            >
+                <div className="w-full !overflow-x-clip h-full px-2 pb-0 pt-2 sm:p-12 sm:pb-0 sm:px-2 sm:pt-2">
+                    <div className="w-full h-full relative">
+                        <nav className="flex flex-col gap-2">
+                            {menuItems.map((item, index) => {
+                                const menuTextColor = isMenuExpanded(item.id)
+                                    ? "text-theme-secondary"
+                                    : "text-theme-secondary-50";
 
-                <div className={`sidemenu-container sidemenu-container-expanded ${isSidebarExpanded ? 'active' : ''}`}>
-                    <div className="sidemenu-header expanded">
-                        <div className="close-button expanded logo fixed">
-                            <span
-                                className="hamburger-bars sidemenu-toggle"
-                                onClick={toggleSidebar}
-                                style={{ cursor: 'pointer' }}
-                            >
-                                <span className="material-icons">{isMobile ? "close" : "menu"}</span>
-                            </span>
-                        </div>
-                        <div className="brand-logo">
-                            <a className="linkCss" onClick={() => navigate("/")}>
-                                <img alt="logo" className="logo light-logo" src={ImgLogo} />
-                            </a>
-                        </div>
-                    </div>
-                    <div className="menu-items-container">
-                        <div className="menu-items menu-items-fixed">
-                            {menuItems.map((menu) => (
-                                <div key={menu.id} className="side-submenu-container">
-                                    <div className={`submenu-container ${isMenuExpanded(menu.id) ? 'expanded-submenu-container' : ''}`}>
-                                        <button
-                                            className={`nav-link submenu-link expandable CUSTOM ${menu.id}`}
-                                            onClick={() => {
-                                                toggleMenu(menu.id);
-                                            }}
-                                            style={{ cursor: 'pointer' }}
+                                // Ref for vertical alignment
+                                const itemRef = (el) => (iconRefs.current[item.id] = el);
+
+                                if (!isSidebarExpanded) {
+                                    return (
+                                        <div
+                                            key={item.id}
+                                            className="group relative"
+                                            ref={itemRef}
+                                            onMouseEnter={(e) => handleMouseEnter(item.id, e)}
+                                            onMouseLeave={handleMouseLeave}
                                         >
-                                            <div className="nav-link-logo">
-                                                <i className={menu.icon}></i>
-                                                {menu.name}
-                                            </div>
-                                            <div>
-                                                <div className="submenu-chevron">
-                                                    <i className="material-icons">
-                                                        {isMenuExpanded(menu.id) ? 'expand_more' : 'chevron_right'}
-                                                    </i>
+                                            {/* Icon Button */}
+                                            <a
+                                                href={item.href}
+                                                className={`text-theme-secondary ring-theme-secondary/10 flex aspect-square w-full items-center justify-center gap-2.5 rounded-2xl p-4 ring-1 transition duration-75 hover:ring-theme-secondary hover:cursor-pointer ${
+                                                    item.id === "casino" || item.id === "live-casino"
+                                                        ? "bg-theme-secondary/20"
+                                                        : "bg-transparent"
+                                                }`}
+                                            >
+                                                <img src={item.image} alt={item.name} className="h-5 w-5" />
+                                            </a>
+                                        </div>
+                                    );
+                                }
+
+                                // Expanded Mode (unchanged)
+                                return (
+                                    <div key={item.id}>
+                                        <div className="relative">
+                                            <div className="[&>[data-headlessui-state='open']]:bg-theme-secondary/10 [&>[data-headlessui-state='open']]:ring-1 flex flex-col gap-2 border-theme-secondary/10 w-full rounded-2xl border p-0 hover:border-theme-secondary/20 hover:bg-theme-secondary/[0.02] [&>[data-headlessui-state='open']]:ring-theme-secondary/20">
+                                                <div
+                                                    data-headlessui-state={isMenuExpanded(item.id) ? "open" : ""}
+                                                    className="relative flex w-full flex-col rounded-2xl transition-all"
+                                                >
+                                                    <div
+                                                        className="flex items-center justify-between gap-2 pr-4 transition duration-75 cursor-pointer"
+                                                        onClick={() => toggleMenu(item.id)}
+                                                    >
+                                                        <a
+                                                            href={item.href}
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            className="aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 max-w-full text-ellipsis ring-0 focus:outline-none focus-visible:outline-0 rounded-lg gap-4 inline-flex items-center justify-center flex-1 py-4 pl-4 text-sm font-bold !leading-tight transition-all lg:text-xs"
+                                                        >
+                                                            <span className="flex w-full items-center gap-2 text-left">
+                                                                <img src={item.image} alt={item.name} className="h-5 w-5" />
+                                                                <span className={`uppercase ${menuTextColor}`}>
+                                                                    {item.name}
+                                                                </span>
+                                                            </span>
+                                                        </a>
+
+                                                        <svg
+                                                            className={`iconify iconify--tabler bg-theme-secondary-300/10 h-6 w-6 rounded p-1 text-theme-secondary transition-transform duration-200 ${
+                                                                isMenuExpanded(item.id) ? "rotate-180" : ""
+                                                            }`}
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth="2"
+                                                                d="m6 9l6 6l6-6"
+                                                            />
+                                                        </svg>
+                                                    </div>
+
+                                                    <div
+                                                        style={{ display: isMenuExpanded(item.id) ? "block" : "none" }}
+                                                        className="overflow-hidden"
+                                                    >
+                                                        <div className="rounded-b-2xl bg-transparent font-normal !leading-tight border-0 text-base text-primary-100 p-0">
+                                                            <div className="flex flex-col gap-1 px-2 pb-2 pt-1">
+                                                                {item.subItems.map((sub) => (
+                                                                    <div key={sub.href}>
+                                                                        <div className="relative">
+                                                                            <div className="relative flex">
+                                                                                <div className="relative inline-flex items-center justify-center flex-shrink-0 w-full">
+                                                                                    <a
+                                                                                        href={sub.href}
+                                                                                        className={`hover:bg-theme-secondary/5 justify-between overflow-hidden rounded-xl px-4 py-3 text-base font-normal !leading-tight text-white lg:text-sm h-[3.25rem] hover:text-white flex w-full items-center gap-2 ${
+                                                                                            activeSubmenuItem === sub.code ||
+                                                                                            location.hash.slice(1) === sub.href.split("#")[1]
+                                                                                                ? "bg-theme-secondary/10"
+                                                                                                : ""
+                                                                                        }`}
+                                                                                    >
+                                                                                        <div className="flex items-center gap-2">
+                                                                                            <span className="relative block">{sub.name}</span>
+                                                                                            {sub.name === "Juegos de Crash" && (
+                                                                                                <span className="inline-flex items-center ring-primary-500 font-semibold rounded-[2.5rem] !leading-tight px-1.5 py-0.5 text-[0.625rem] leading-[normal] gap-0.5 text-dark-grey-900 bg-theme-secondary">
+                                                                                                    POPULARES
+                                                                                                </span>
+                                                                                            )}
+                                                                                        </div>
+                                                                                    </a>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </button>
-                                        <div className={`expandeble-sub-menu collapse ${isMenuExpanded(menu.id) ? 'expanded-sub-menu show' : ''}`}>
-                                            {menu.subItems.map((subItem, subIndex) => {
-                                                let categoryCode = "";
-                                                if (menu.id === "live-casino" && subItem.href.includes("#")) {
-                                                    categoryCode = subItem.href.split("#")[1];
-                                                }
-                                                
-                                                const isActive = menu.id === "live-casino" 
-                                                    ? categoryCode === activeSubmenuItem
-                                                    : subItem.href === location.pathname + location.hash;
-                                                
-                                                return (
-                                                    <button
-                                                        key={subIndex}
-                                                        className={`nav-link submenu-tab-link CUSTOM ${subItem.name.toLowerCase().replace(/\s+/g, '-')} ${isActive ? 'active' : ''}`}
-                                                        onClick={() => {navigate(subItem.href), isMobile && toggleSidebar()}}
-                                                    >
-                                                        <i className={subItem.icon}></i>
-                                                        {/* {
-                                                            menu.id !== "live-casino" ? <i className={subItem.icon}></i> : <img src={subItem.icon} width={25} />
-                                                        } */}
-                                                        {subItem.name}
-                                                    </button>
-                                                );
-                                            })}
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="menu-divider"></div>
-                    <div className="footer-items footer-items-fixed"></div>
-                    <div className="language-wrapper-container d-none">
-                        <div className="dropdown-btn small dropdown">
-                            <button
-                                aria-haspopup="true"
-                                aria-expanded={showLanguageDropdown}
-                                id="dropdown-btn"
-                                type="button"
-                                className="dropdown-toggle btn btn-secondary"
-                                onClick={toggleLanguageDropdown}
-                                style={{ cursor: 'pointer' }}
-                            >
-                                <i className="material-icons">language</i>
-                                {currentLanguage.name} ({currentLanguage.code})
-                            </button>
-                            {showLanguageDropdown && (
-                                <div
-                                    aria-labelledby="dropdown-btn"
-                                    className="dropdown-menu show"
-                                >
-                                    {languages.map((language) => (
-                                        <a
-                                            key={language.code}
-                                            href="#"
-                                            className={`dropdown-item ${language.code === currentLanguage.code ? 'active' : ''}`}
-                                            role="button"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                handleLanguageSelect(language.code);
-                                            }}
-                                        >
-                                            {language.name} ({language.code})
-                                        </a>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
+                                );
+                            })}
+                        </nav>
                     </div>
                 </div>
-            </div>
+            </aside>
 
-            {
-                !isSportsPage && <nav className="bottom-menu">
-                    <button className="mobile-menu-item" onClick={() => navigate("/casino")}>
-                        <div className="icon"><i className="custom-icon-bp-casino"></i></div>
-                        <div className="menu-text">Casino</div>
-                    </button>
-                    {
-                        !isSlotsOnlyMode && <>
-                            <button className="mobile-menu-item" onClick={() => navigate("/live-casino")}>
-                                <div className="icon"><i className="custom-icon-bp-live-casino"></i></div>
-                                <div className="menu-text">Casino en Vivo</div>
-                            </button>
-                            <button className="mobile-menu-item" onClick={() => navigate("/sports")}>
-                                <div className="icon"><i className="custom-icon-bp-sports"></i></div>
-                                <div className="menu-text">Deportes</div>
-                            </button>
-                        </>
-                    }
-                    <button className="mobile-menu-item" onClick={toggleSidebar}>
-                        <div className="icon"><span className="material-icons">menu</span></div>
-                        <div className="menu-text">Menú</div>
-                    </button>
-                </nav>
-            }
+            {/* Popover Portal */}
+            {isPopoverVisible && hoveredMenu && !isSidebarExpanded && (
+                <div
+                    ref={popoverRef}
+                    className="fixed z-[100] min-w-[15rem] transition-opacity duration-200"
+                    style={{
+                        top: `${popoverPosition.top}px`,
+                        left: `${popoverPosition.left}px`,
+                    }}
+                    onMouseEnter={handlePopoverMouseEnter}
+                    onMouseLeave={handlePopoverMouseLeave}
+                >
+                    <div className="overflow-hidden focus:outline-none relative flex flex-col gap-1 p-4 bg-theme-primary-950 ring-theme-secondary/10 ring-1 rounded-2xl shadow-2xl">
+                        {/* Main Title */}
+                        <a
+                            href={menuItems.find(item => item.id === hoveredMenu)?.href}
+                            className="text-theme-secondary-50 relative flex items-center justify-between pb-2 text-lg font-bold uppercase after:bg-theme-secondary/0 after:absolute after:bottom-0 after:h-px after:w-full hover:after:bg-theme-secondary hover:text-white hover:after:h-0.5 transition-all"
+                        >
+                            <span>{menuItems.find(item => item.id === hoveredMenu)?.name}</span>
+                        </a>
+
+                        {/* Sub Items */}
+                        {menuItems.find(item => item.id === hoveredMenu)?.subItems.map((sub) => (
+                            <a
+                                key={sub.href}
+                                href={sub.href}
+                                className="hover:bg-theme-secondary/5 justify-between overflow-hidden rounded-xl px-4 py-3 text-base font-normal !leading-tight text-white lg:text-sm hover:text-white flex w-full items-center gap-2 transition-colors"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <span className="relative block">{sub.name}</span>
+                                    {sub.name === "Juegos de Crash" && (
+                                        <span className="inline-flex items-center ring-primary-500 font-semibold rounded-[2.5rem] !leading-tight px-1.5 py-0.5 text-[0.625rem] leading-[normal] gap-0.5 text-dark-grey-900 bg-theme-secondary">
+                                            POPULARES
+                                        </span>
+                                    )}
+                                </div>
+                            </a>
+                        ))}
+                    </div>
+                </div>
+            )}
         </>
     );
 };

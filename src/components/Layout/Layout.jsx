@@ -183,7 +183,7 @@ const Layout = () => {
             <NavigationContext.Provider
                 value={{ selectedPage, setSelectedPage, getPage, showFullDivLoading, setShowFullDivLoading }}
             >
-                <>
+                <div className="grid min-h-[calc(_100dvh_-_var(--pwa-prompt-height,0px))] grid-rows-[auto_1fr_auto] pb-[var(--header-bottom-height)] grid-cols-[15rem_calc(100%_-_15rem)] [grid-template-areas:_'header_header'_'nav_main'_'nav_footer']">
                     {/* <FullDivLoading show={showFullDivLoading} /> */}
                     {showLoginModal && (
                         <LoginModal
@@ -222,7 +222,7 @@ const Layout = () => {
                         supportParentOnly={supportParentOnly}
                         supportParent={supportParent}
                     />
-                </>
+                </div>
             </NavigationContext.Provider>
         </LayoutContext.Provider>
     );

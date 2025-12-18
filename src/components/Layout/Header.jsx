@@ -30,7 +30,7 @@ const Header = ({
                         <img src={isSidebarExpanded ? ImgCloseMenu : ImgOpenMenu} alt="Menu toggle" style={{ width: 20 }} />
                     </button>
 
-                    <a href="/es" className="block lg:mr-8" title="Logo">
+                    <a onClick={() => navigate("/")} className="block lg:mr-8" title="Logo">
                         <img src={ImgLogo} alt="Logo" />
                     </a>
                 </div>
