@@ -1,8 +1,8 @@
 import { useContext, useState, useEffect } from "react";
 import { AppContext } from "../../AppContext";
 import { callApi } from "../../utils/Utils";
-import LoadApi from "../Loading/LoadApi";
-import IconClose from "/src/assets/svg/close.svg";
+// import LoadApi from "../Loading/LoadApi";
+// import IconClose from "/src/assets/svg/close.svg";
 
 const LoginModal = ({ isMobile, isOpen, onClose, onConfirm, onLoginSuccess }) => {
     const { contextData, updateSession } = useContext(AppContext);

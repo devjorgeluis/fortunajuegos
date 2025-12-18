@@ -5,10 +5,8 @@ import { LayoutContext } from "../components/Layout/LayoutContext";
 import { NavigationContext } from "../components/Layout/NavigationContext";
 import { callApi } from "../utils/Utils";
 import GameCard from "/src/components/GameCard";
-import Slideshow from "../components/Casino/Slideshow";
 import CategoryContainer from "../components/CategoryContainer";
 import GameModal from "../components/Modal/GameModal";
-import About from "../components/Home/About";
 import Footer from "../components/Layout/Footer";
 import LoadGames from "../components/Loading/LoadGames";
 import SearchInput from "../components/SearchInput";
@@ -450,7 +448,6 @@ const Casino = () => {
             <div className="root-wrapper">
               <div className="page">
                 <div className="casino-container">
-                  <Slideshow />
                   <div className="container-fluid search-and-filter-wrapper" id="casinoFilterWrapper">
                     <div className="container search-and-filter-container">
                       <div className="row">
@@ -625,10 +622,8 @@ const Casino = () => {
                     </div>
                   </div>
                 </div>
-                <About />
               </div>
             </div>
-            <Footer isSlotsOnly={isSlotsOnly} />
           </div>
         </>
       )}

@@ -2,8 +2,8 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { LayoutContext } from "./LayoutContext";
 import LoadApi from "../Loading/LoadApi";
-import ImgLogo from "/src/assets/svg/logo.svg";
-import IconClose from "/src/assets/svg/close.svg";
+import ImgLogo from "/src/assets/svg/logo-desktop.svg";
+// import IconClose from "/src/assets/svg/close.svg";
 import ImgSupport from "/src/assets/svg/support-black.svg";
 
 const Header = ({

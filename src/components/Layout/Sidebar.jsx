@@ -3,9 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { LayoutContext } from "./LayoutContext";
 import { AppContext } from "../../AppContext";
 import { callApi } from "../../utils/Utils";
-import IconDots from "/src/assets/svg/dots.svg";
-import IconDownload from "/src/assets/svg/download.svg";
-import ImgLogo from "/src/assets/svg/logo.svg";
+import ImgLogo from "/src/assets/svg/logo-desktop.svg";
 
 const Sidebar = ({ isSlotsOnly, isMobile }) => {
     const { isSidebarExpanded, toggleSidebar } = useContext(LayoutContext);
@@ -260,56 +258,6 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
                             </a>
                         </div>
                     </div>
-                    <div className="content d-none">
-                        <div className="cashback-component">
-                            <div className="cashback-header-container">
-                                <h4>Cashback semanal en</h4>
-                            </div>
-                            <div className="cashback-timer-container">
-                                <div className="cashback-timer-item">
-                                    <div className="cachback-timer-item-count nav-link">
-                                        <h3>{countdown.days}</h3>
-                                    </div>
-                                    <div className="cachback-timer-item-text">
-                                        <span>DÍAS</span>
-                                    </div>
-                                </div>
-                                <span className="timer-dots">
-                                    <img src={IconDots} alt="dots" />
-                                </span>
-                                <div className="cashback-timer-item">
-                                    <div className="cachback-timer-item-count nav-link">
-                                        <h3>{countdown.hours.toString().padStart(2, '0')}</h3>
-                                    </div>
-                                    <div className="cachback-timer-item-text">
-                                        <span>H</span>
-                                    </div>
-                                </div>
-                                <span className="timer-dots">
-                                    <img src={IconDots} alt="dots" />
-                                </span>
-                                <div className="cashback-timer-item">
-                                    <div className="cachback-timer-item-count nav-link">
-                                        <h3>{countdown.minutes.toString().padStart(2, '0')}</h3>
-                                    </div>
-                                    <div className="cachback-timer-item-text">
-                                        <span>MIN</span>
-                                    </div>
-                                </div>
-                                <span className="timer-dots">
-                                    <img src={IconDots} alt="dots" />
-                                </span>
-                                <div className="cashback-timer-item">
-                                    <div className="cachback-timer-item-count nav-link">
-                                        <h3>{countdown.seconds.toString().padStart(2, '0')}</h3>
-                                    </div>
-                                    <div className="cachback-timer-item-text">
-                                        <span>SEG</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <div className="menu-items-container">
                         <div className="menu-items menu-items-fixed">
                             {menuItems.map((menu) => (
@@ -402,23 +350,6 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
                                     ))}
                                 </div>
                             )}
-                        </div>
-                    </div>
-                    <div className="footer-content footer-content-fixed d-none">
-                        <div className="app-install-container">
-                            <div className="app-buttons-container">
-                                <div className="download-text-area">Download App</div>
-                                <button name="windows app download button" aria-label="windows app download button" className="app-button windows">
-                                    <i className="device-icon">
-                                        <img src={IconDownload} alt="Windows app" />
-                                    </i>
-                                    <div className="hoverBubble bubblePosition windows">
-                                        <p></p>
-                                        <p></p>
-                                        <p>Haz clic para instalar la aplicación</p>
-                                    </div>
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>

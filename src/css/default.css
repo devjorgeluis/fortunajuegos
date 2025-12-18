@@ -1,0 +1,8 @@
+.v-enter-active[data-v-30a27a76],.v-leave-active[data-v-30a27a76] {
+    transition: opacity .3s ease-out,transform .3s ease-out
+}
+
+.v-enter-from[data-v-30a27a76],.v-leave-to[data-v-30a27a76] {
+    opacity: 0;
+    transform: scale(2)
+}

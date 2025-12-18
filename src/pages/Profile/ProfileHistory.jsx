@@ -3,10 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { AppContext } from "../../AppContext";
 import { callApi } from "../../utils/Utils";
 import LoadApi from "../../components/Loading/LoadApi";
-import IconChevronLeft from "/src/assets/svg/chevron-left.svg";
-import IconChevronRight from "/src/assets/svg/chevron-right.svg";
-import IconDoubleLeft from "/src/assets/svg/double-arrow-left.svg";
-import IconDoubleRight from "/src/assets/svg/double-arrow-right.svg";
 
 const ProfileHistory = () => {
     const navigate = useNavigate();
@@ -61,28 +57,6 @@ const ProfileHistory = () => {
             year: 'numeric'
         }).replace(/\//g, '.');
     };
-
-    const CustomFromInput = () => (
-        <button className="date-picker-wrapper_datePickerButton" onClick={() => setShowFromCalendar(!showFromCalendar)}>
-            <span className="date-picker-wrapper_datePickerButtonContent date-picker-wrapper_hasValue">
-                <span className="date-picker-wrapper_datePickerButtonLabel">Desde</span><span className="date-picker-wrapper_datePickerButtonValue">{formatDate(filters.dateFrom)}</span>
-            </span>
-            <span className="date-picker-wrapper_datePickerButtonArrow">
-                <img src={IconChevronLeft} />
-            </span>
-        </button>
-    );
-
-    const CustomToInput = () => (
-        <button className="date-picker-wrapper_datePickerButton" onClick={() => setShowToCalendar(!showToCalendar)}>
-            <span className="date-picker-wrapper_datePickerButtonContent date-picker-wrapper_hasValue">
-                <span className="date-picker-wrapper_datePickerButtonLabel">Hasta</span><span className="date-picker-wrapper_datePickerButtonValue">{formatDate(filters.dateTo)}</span>
-            </span>
-            <span className="date-picker-wrapper_datePickerButtonArrow">
-                <img src={IconChevronLeft} />
-            </span>
-        </button>
-    );
 
     const handleFilterChange = (name, checked) => {
         setFilters((prev) => ({
@@ -324,50 +298,6 @@ const ProfileHistory = () => {
                                         </div>
                                     </div>
                                     }
-
-                                    {totalPages > 1 && (
-                                        <div className="transaction-table">
-                                            <div className="transaction-table__status-pagination">
-                                                <div className="transaction-table__paginate">
-                                                    {pagination.currentPage > 1 && (
-                                                        <>
-                                                            {
-                                                                !isMobile && <button className="transaction-table-paginate--btn" onClick={handleFirstPage}>
-                                                                    <img src={IconDoubleLeft} alt="first" width={16} />
-                                                                </button>
-                                                            }
-                                                            <button className="transaction-table-paginate--btn" onClick={handlePrevPage}>
-                                                                <img src={IconChevronLeft} alt="next" width={20} style={{filter: "invert(1)"}} />
-                                                            </button>
-                                                        </>
-                                                    )}
-
-                                                    {visiblePages.map((page) => (
-                                                        <span
-                                                            key={page}
-                                                            className="transaction-table-paginate--btn"
-                                                            onClick={() => handlePageChange(page)}
-                                                        >
-                                                            {page}
-                                                        </span>
-                                                    ))}
-
-                                                    {pagination.currentPage < totalPages && (
-                                                        <>
-                                                            <button className="transaction-table-paginate--btn" onClick={handleNextPage}>
-                                                                <img src={IconChevronRight} alt="first" width={20} style={{filter: "invert(1)"}} />
-                                                            </button>
-                                                            {
-                                                                !isMobile && <button className="transaction-table-paginate--btn" onClick={handleLastPage}>
-                                                                    <img src={IconDoubleRight} alt="next" width={16} />
-                                                                </button>
-                                                            }
-                                                        </>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
                                 </div>
                             </div>
                         </div>
