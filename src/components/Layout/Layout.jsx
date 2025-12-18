@@ -10,7 +10,6 @@ import LoginModal from "../Modal/LoginModal";
 import SupportModal from "../Modal/SupportModal";
 import { NavigationContext } from "./NavigationContext";
 import FullDivLoading from "../Loading/FullDivLoading";
-import ChatButton from "../ChatButton";
 import MobileSearch from "../MobileSearch";
 
 const Layout = () => {
@@ -185,8 +184,7 @@ const Layout = () => {
                 value={{ selectedPage, setSelectedPage, getPage, showFullDivLoading, setShowFullDivLoading }}
             >
                 <>
-                    <FullDivLoading show={showFullDivLoading} />
-                    {!isSportsPage && <ChatButton />}
+                    {/* <FullDivLoading show={showFullDivLoading} /> */}
                     {showLoginModal && (
                         <LoginModal
                             isMobile={isMobile}
@@ -195,37 +193,35 @@ const Layout = () => {
                             onLoginSuccess={handleLoginSuccess}
                         />
                     )}
-                    <div className={`menu-layout ${isSmallScreen ? 'absolute' : 'fixed'}`}>
-                        <Header
+                    <Header
+                        isLogin={isLogin}
+                        isMobile={isMobile}
+                        userBalance={userBalance}
+                        handleLoginClick={handleLoginClick}
+                        handleLogoutClick={handleLogoutClick}
+                        supportParent={supportParent}
+                        openSupportModal={openSupportModal}
+                    />
+                    <Sidebar isSlotsOnly={isSlotsOnly} isMobile={isMobile} supportParent={supportParent} openSupportModal={openSupportModal} />
+                    <main className={`menu-layout-content ${isSidebarExpanded ? 'expanded' : 'collapsed'} ${isSportsPage ? 'sports' : ''}`}>
+                        <Outlet context={{ isSlotsOnly, isMobile }} />
+                    </main>
+                    {showMobileSearch && isMobile && (
+                        <MobileSearch
                             isLogin={isLogin}
                             isMobile={isMobile}
-                            userBalance={userBalance}
-                            handleLoginClick={handleLoginClick}
-                            handleLogoutClick={handleLogoutClick}
-                            supportParent={supportParent}
-                            openSupportModal={openSupportModal}
+                            onClose={() => setShowMobileSearch(false)}
                         />
-                        <Sidebar isSlotsOnly={isSlotsOnly} isMobile={isMobile} supportParent={supportParent} openSupportModal={openSupportModal} />
-                        <main className={`menu-layout-content ${isSidebarExpanded ? 'expanded' : 'collapsed'} ${isSportsPage ? 'sports' : ''}`}>
-                            <Outlet context={{ isSlotsOnly, isMobile }} />
-                        </main>
-                        {showMobileSearch && isMobile && (
-                            <MobileSearch
-                                isLogin={isLogin}
-                                isMobile={isMobile}
-                                onClose={() => setShowMobileSearch(false)}
-                            />
-                        )}
-                        <SupportModal
-                            isOpen={showSupportModal}
-                            onClose={closeSupportModal}
-                            supportWhatsApp={supportWhatsApp}
-                            supportTelegram={supportTelegram}
-                            supportEmail={supportEmail}
-                            supportParentOnly={supportParentOnly}
-                            supportParent={supportParent}
-                        />
-                    </div>
+                    )}
+                    <SupportModal
+                        isOpen={showSupportModal}
+                        onClose={closeSupportModal}
+                        supportWhatsApp={supportWhatsApp}
+                        supportTelegram={supportTelegram}
+                        supportEmail={supportEmail}
+                        supportParentOnly={supportParentOnly}
+                        supportParent={supportParent}
+                    />
                 </>
             </NavigationContext.Provider>
         </LayoutContext.Provider>

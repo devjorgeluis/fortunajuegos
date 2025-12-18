@@ -1,9 +1,10 @@
-import { useState, useContext } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { LayoutContext } from "./LayoutContext";
-import LoadApi from "../Loading/LoadApi";
 import ImgLogo from "/src/assets/svg/logo-desktop.svg";
-// import IconClose from "/src/assets/svg/close.svg";
+import ImgCloseMenu from "/src/assets/svg/close-menu.svg";
+import ImgOpenMenu from "/src/assets/svg/open-menu.svg";
+import ImgSearch from "/src/assets/svg/search.svg";
 import ImgSupport from "/src/assets/svg/support-black.svg";
 
 const Header = ({
@@ -12,341 +13,83 @@ const Header = ({
     userBalance,
     supportParent,
     handleLoginClick,
-    handleLogoutClick,
-    openSupportModal
+    openSupportModal,
 }) => {
-    const { isSidebarExpanded } = useContext(LayoutContext);
+    const { isSidebarExpanded, toggleSidebar } = useContext(LayoutContext);
     const navigate = useNavigate();
-    const [showUserMenu, setShowUserMenu] = useState(false);
-    const [showLanguageMenu, setShowLanguageMenu] = useState(false);
-    const [showMenuContainer, setShowMenuContainer] = useState(false);
-    const [showMobileMenuContainer, setShowMobileMenuContainer] = useState(false);
-    const [isLogoutLoading, setIsLogoutLoading] = useState(false);
-
-    const closeUserMenu = () => {
-        setShowUserMenu(false);
-    };
-
-    const toggleMenuContainer = () => {
-        setShowMenuContainer(!showMenuContainer);
-    };
-
-    const toggleMobileMenuContainer = () => {
-        setShowMobileMenuContainer(!showMobileMenuContainer);
-    };
-
-    const closeMenuContainer = () => {
-        setShowMenuContainer(false);
-    };
-
-    const toggleLanguageMenu = () => {
-        setShowLanguageMenu(!showLanguageMenu);
-    };
-
-    const closeLanguageMenu = () => {
-        setShowLanguageMenu(false);
-    };
-
-    const handleLanguageSelect = () => {
-        closeLanguageMenu();
-    };
-
-    const handleClickOutside = (event) => {
-        if (!event.target.closest('.dropdown') && !event.target.closest('.user-menu-container') && !event.target.closest('.account-button') && !event.target.closest('.menuContainer')) {
-            closeLanguageMenu();
-            closeUserMenu();
-            closeMenuContainer();
-        }
-    };
-
-    useState(() => {
-        document.addEventListener('click', handleClickOutside);
-        return () => {
-            document.removeEventListener('click', handleClickOutside);
-        };
-    }, []);
-
-    const languages = [
-        { code: "EN", name: "English" },
-        { code: "DE", name: "Deutsch" },
-        { code: "JA", name: "日本語" },
-        { code: "FR", name: "Français" },
-        { code: "NL", name: "Nederlands" },
-        { code: "PT", name: "Português" },
-        { code: "TR", name: "Türkçe" },
-        { code: "ES", name: "Español" },
-        { code: "KO", name: "한국어" },
-        { code: "IT", name: "Italiano" },
-        { code: "EL", name: "Ελληνικά" },
-        { code: "AR", name: "العربية" },
-        { code: "ZH", name: "中文" },
-        { code: "CS", name: "Čeština" }
-    ];
-
-    const baseMenuItems = [
-        {
-            className: "menu-button profile-button",
-            link: "/profile",
-            icon: "account_circle",
-            title: "Perfil"
-        },
-        {
-            className: "menu-button balances-button",
-            link: "/profile/balance",
-            icon: "account_balance_wallet",
-            title: "Saldos de la cuenta"
-        },
-        {
-            className: "menu-button transactions-button",
-            link: "/profile/history",
-            icon: "format_list_bulleted",
-            title: "Transacciones"
-        },
-        {
-            className: "menu-button logout-button",
-            link: "",
-            icon: "logout",
-            title: "Cerrar sesión"
-        }
-    ];
-
-    let menuItems = [...baseMenuItems];
-    if (supportParent) {
-        const supportItem = {
-            className: "menu-button support-button",
-            link: null,
-            icon: "phone",
-            title: "Contactá a Tu Cajero",
-            isSupport: true
-        };
-        const idx = menuItems.findIndex(item => item.className && item.className.includes('transactions-button'));
-        if (idx >= 0) menuItems.splice(idx + 1, 0, supportItem);
-        else menuItems.push(supportItem);
-    }
 
     return (
-        <div className={`menu-layout-navbar ${isSidebarExpanded ? 'expanded' : ''}`}>
-            <nav id="mainNav" className={`main-menu-container header landing-page ${isMobile ? 'mobile ' : ' '} ${isLogin ? 'logged-in' : ''}`}>
-                <div className="navbar-nav">
-                    <div className="desktop-top-menu-nav"></div>
-                    <div className="desktop-logo-container">
-                        <a
-                            onClick={() => navigate("/")}
-                            className="linkCss active"
-                            aria-current="page"
-                        >
-                            <img
-                                alt="Company logo"
-                                className="logo light-logo"
-                                src={ImgLogo}
-                            />
-                        </a>
-                    </div>
-                    <div className="desktop-user-panel">
-                        {
-                            isLogin ? <div className="loggedin">
-                                <div className="loggedinContainer">
-                                    <div className="currency-selector-container">
-                                        <div className="currency-selector true" id="currency-selector-button">
-                                            <span className="balance">
-                                                <span>{userBalance ? "$ " + parseFloat(userBalance).toFixed(2) : "$0.00"}</span>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div
-                                        className="account-button"
-                                        onClick={toggleMenuContainer}
-                                        style={{ cursor: 'pointer' }}
-                                    >
-                                        <i className="material-icons">account_circle</i>
-                                    </div>
-                                    {
-                                        showMenuContainer && <div className="menuContainer">
-                                            <div className="menu">
-                                                <div className="menu-title"></div>
-                                                <nav className="menuButtonWrapper">
-                                                    {menuItems.map((item, index) => (
-                                                        <a
-                                                            key={index}
-                                                            className={item.className}
-                                                            onClick={() => {
-                                                                if (item.isSupport) {
-                                                                    openSupportModal(true);
-                                                                    closeMenuContainer();
-                                                                } else if (item.link === "") {
-                                                                    setIsLogoutLoading(true);
-                                                                    handleLogoutClick();
-                                                                } else {
-                                                                    navigate(item.link);
-                                                                    closeMenuContainer();
-                                                                }
-                                                            }}
-                                                            style={{ position: 'relative' }}
-                                                        >
-                                                            <span className="icon">
-                                                                {item.link === "" && isLogoutLoading ? "" : <i className="material-icons">{item.icon}</i>}
-                                                            </span>
-                                                            <span className="title">
-                                                                {item.link === "" && isLogoutLoading ? <LoadApi /> : item.title}
-                                                            </span>
-                                                        </a>
-                                                    ))}
-                                                    
-                                                </nav>
-                                            </div>
-                                        </div>
-                                    }
-                                </div>
-                            </div> : <div className="lngAndButtonWrap">
-                                <div className="hide-in-context language-menu-container d-none">
-                                    <div className="dropdown">
-                                        <div
-                                            className="dropbtn"
-                                            onClick={toggleLanguageMenu}
-                                            style={{ cursor: 'pointer' }}
-                                        >
-                                            <div className="dropdownItem active">
-                                                <div className="item active">
-                                                    <div className="flag-button-container">
-                                                        <span className="flagIcon">
-                                                            <i className="material-icons">language</i>
-                                                        </span>
-                                                        <span className="arrow-icon">
-                                                            <span className="material-icons">
-                                                                {showLanguageMenu ? 'arrow_drop_up' : 'arrow_drop_down'}
-                                                            </span>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {showLanguageMenu && (
-                                            <div className="dropdown-content">
-                                                {languages.map((language) => (
-                                                    <div
-                                                        key={language.code}
-                                                        className="dropdownItem"
-                                                        onClick={() => handleLanguageSelect(language.code)}
-                                                        style={{ cursor: 'pointer' }}
-                                                    >
-                                                        <div className="item">
-                                                            <span style={{ paddingLeft: "10px" }}>
-                                                                <span style={{ width: "29px", display: "inline-block" }}>
-                                                                    {language.code}
-                                                                </span>{" "}
-                                                                {language.name}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                                <button className="button-support" onClick={() => { openSupportModal(false); }}>
-                                    <img src={ImgSupport} />
-                                </button>
-                                <button className="btn btn-secondary desktop-login register-link small fixed-menu-btn topmenu" onClick={() => handleLoginClick()}>
-                                    Acceso
-                                </button>
-                                {/* <button className="btn btn-cta register-link small fixed-menu-btn topmenu">
-                                Regístrate
-                            </button> */}
-                            </div>
-                        }
-                    </div>
-                </div>
-                <div className="headerWrapper">
-                    <div className="header-container">
-                        <div className={`headerLeft ${isLogin ? " head" : ""}`}>
-                            {
-                                isLogin ? <a aria-current="page" className="linkCss active" onClick={() => navigate("/")}>
-                                    <img alt="logo" className="logo light-logo" src={ImgLogo} />
-                                </a> :
-                                    <button className="hamburger-bars" aria-label="Open menu"><span className="material-icons">menu</span></button>
-                            }
-                        </div>
-                        <div className="headerMiddle">
-                            {
-                                !isLogin && <a aria-current="page" className="linkCss active" onClick={() => navigate("/")}>
-                                    <img alt="logo" className="logo light-logo" src={ImgLogo} />
-                                </a>
-                            }
-                        </div>
-                        <div className="headerRight">
-                            {
-                                isLogin ? <div className="loggedin">
-                                    <div className="loggedinContainer">
-                                        <button className="button-support" onClick={() => { openSupportModal(false); }}>
-                                            <img src={ImgSupport} />
-                                        </button>
+        <header className="bg-primary-900 sticky top-0 z-[11] [grid-area:_header] border-theme-secondary/10 border-b">
+            <div className="relative flex min-h-[3.5rem] flex-wrap items-center gap-2 px-4 py-3 lg:z-[100]">
+                <div className="flex items-center gap-4">
+                    <button
+                        type="button"
+                        onClick={toggleSidebar}
+                        className="aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full flex-shrink-0 text-ellipsis ring-0 focus-visible:outline-0 font-bold rounded-lg text-base gap-2.5 p-2.5 text-theme-secondary-500 bg-theme-secondary-500/10 disabled:bg-theme-secondary-500/10 disabled:text-theme-secondary-500 disabled:opacity-30 focus-visible:ring-theme-secondary-500 focus-visible:ring-2 focus-visible:ring-inset focus:outline-theme-secondary-500/10 focus:bg-theme-secondary-500/20 focus:outline focus:outline-4 hover:bg-theme-secondary-500/20 inline-flex items-center justify-center"
+                    >
+                        <img src={isSidebarExpanded ? ImgCloseMenu : ImgOpenMenu} alt="Menu toggle" style={{ width: 20 }} />
+                    </button>
 
-                                        <div className="currency-selector-container">
-                                            <div className="currency-selector true " id="currency-selector-button">
-                                                <span className="balance">
-                                                    <span>{userBalance ? "$ " + parseFloat(userBalance).toFixed(2) : "$0.00"}</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div
-                                            className="mobile-account-button"
-                                            onClick={toggleMobileMenuContainer}
-                                            style={{ cursor: 'pointer' }}
-                                        >
-                                            <i className="material-icons">account_circle</i>
-                                        </div>
-                                        {
-                                            showMobileMenuContainer && <div className="menuContainer">
-                                                <div className="menu">
-                                                    <div className="menu-title"></div>
-                                                    <div className="menu-close" onClick={toggleMobileMenuContainer}>
-                                                        <img src={IconClose} style={{ filter: 'invert(1)', width: '20px' }} />
-                                                    </div>
-                                                    <nav className="menuButtonWrapper">
-                                                        {menuItems.map((item, index) => (
-                                                            <a
-                                                                key={index}
-                                                                className={item.className}
-                                                                onClick={() => {
-                                                                    if (item.isSupport) {
-                                                                        openSupportModal(true);
-                                                                        toggleMobileMenuContainer();
-                                                                    } else if (item.link === "") {
-                                                                        setIsLogoutLoading(true);
-                                                                        handleLogoutClick();
-                                                                    } else {
-                                                                        navigate(item.link);
-                                                                        toggleMobileMenuContainer();
-                                                                    }
-                                                                }}
-                                                                style={{ position: 'relative' }}
-                                                            >
-                                                                <span className="icon">
-                                                                    {item.link === "" && isLogoutLoading ? "" : <i className="material-icons">{item.icon}</i>}
-                                                                </span>
-                                                                <span className="title">
-                                                                    {item.link === "" && isLogoutLoading ? <LoadApi /> : item.title}
-                                                                </span>
-                                                            </a>
-                                                        ))}
-                                                       
-                                                    </nav>
-                                                </div>
-                                            </div>
-                                        }
-                                    </div>
-                                </div> : <div className="lngAndButtonWrap">
-                                    <button className="button-support" onClick={() => { openSupportModal(false); }}>
-                                        <img src={ImgSupport} />
-                                    </button>
-                                    <button className="btn btn-secondary small login-button fixed-menu-btn" onClick={() => handleLoginClick()}>Acceso</button>
-                                </div>
-                            }
-                        </div>
-                    </div>
+                    <a href="/es" className="block lg:mr-8" title="Logo">
+                        <img src={ImgLogo} alt="Logo" />
+                    </a>
                 </div>
-            </nav>
-        </div>
+
+                <div className="flex flex-wrap items-center gap-2 flex-1">
+                    <div className="relative w-full max-w-full flex-1">
+                        <input
+                            id="search"
+                            name="searchInput"
+                            type="text"
+                            placeholder="Buscar..."
+                            className="h-12 w-full rounded-lg border-0 bg-dark-grey-950/50 pl-12 pr-4 text-white/50 placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-theme-highlight-green/20"
+                            autoComplete="off"
+                            readOnly
+                        />
+                        <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                            <img src={ImgSearch} alt="Buscar" className="w-6 h-6 text-white/20" />
+                        </span>
+                    </div>
+
+                    <button className="button-support" onClick={() => { openSupportModal(false); }}>
+                        <img src={ImgSupport} />
+                    </button>
+
+                    {isLogin ? (
+                        <>
+                            <div className="inline-flex items-center rounded-lg bg-theme-secondary-500/10 px-4 py-3 text-theme-secondary-500 font-bold">
+                                <span className="text-sm sm:text-base">{Number.isFinite(Number(userBalance)) ? Number(userBalance).toFixed(2) : "0.00"}</span>
+                            </div>
+
+                            <a
+                                href="#"
+                                className="flex items-center gap-3 min-h-10 rounded-lg bg-theme-secondary-500/10 px-4 py-3 text-theme-secondary-500 font-bold hover:bg-theme-secondary-500/20"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    className="w-6 h-6"
+                                    fill="currentColor"
+                                >
+                                    <path d="M5.85 17.1q1.275-.975 2.85-1.537T12 15t3.3.563t2.85 1.537q.875-1.025 1.363-2.325T20 12q0-3.325-2.337-5.663T12 4T6.337 6.338T4 12q0 1.475.488 2.775T5.85 17.1M12 13q-1.475 0-2.488-1.012T8.5 9.5t1.013-2.488T12 6t2.488 1.013T15.5 9.5t-1.012 2.488T12 13m0 9q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22m0-2q1.325 0 2.5-.387t2.15-1.113q-.975-.725-2.15-1.112T12 17t-2.5.388T7.35 18.5q.975.725 2.15 1.113T12 20m0-9q.65 0 1.075-.425T13.5 9.5t-.425-1.075T12 8t-1.075.425T10.5 9.5t.425 1.075T12 11m0 7.5" />
+                                </svg>
+                                <span>Mi cuenta</span>
+                            </a>
+                        </>
+                    ) : (
+                        <div className="flex items-center gap-2 ml-2">
+                            <button
+                                type="button"
+                                onClick={handleLoginClick}
+                                className="min-h-12 rounded-lg bg-transparent px-6 py-3 text-theme-secondary-500 font-bold ring-1 ring-theme-secondary-500 hover:bg-theme-secondary-500/10 focus-visible:ring-2 focus-visible:ring-theme-secondary-500"
+                            >
+                                Iniciar sesión
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </header>
     );
 };
 

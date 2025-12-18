@@ -66,7 +66,7 @@ const LoginModal = ({ isMobile, isOpen, onClose, onConfirm, onLoginSuccess }) =>
                     <div className="modal-content">
                         <div className="modal-wrapper login active">
                             <button className="modal-close-btn" onClick={onClose}>
-                                <img src={IconClose} />
+                                {/* <img src={IconClose} /> */}
                             </button>
                         </div>
                         <div className="modal-container">
