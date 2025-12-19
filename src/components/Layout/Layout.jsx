@@ -203,9 +203,7 @@ const Layout = () => {
                         openSupportModal={openSupportModal}
                     />
                     <Sidebar isSlotsOnly={isSlotsOnly} isMobile={isMobile} supportParent={supportParent} openSupportModal={openSupportModal} />
-                    <main className={`menu-layout-content ${isSidebarExpanded ? 'expanded' : 'collapsed'} ${isSportsPage ? 'sports' : ''}`}>
-                        <Outlet context={{ isSlotsOnly, isMobile }} />
-                    </main>
+                    <Outlet context={{ isSlotsOnly, isMobile }} />
                     {showMobileSearch && isMobile && (
                         <MobileSearch
                             isLogin={isLogin}

@@ -4,6 +4,7 @@ import { AppContext } from "../AppContext";
 import { LayoutContext } from "../components/Layout/LayoutContext";
 import { NavigationContext } from "../components/Layout/NavigationContext";
 import { callApi } from "../utils/Utils";
+import DropWins from "../components/Home/DropWins";
 import GameSlideshow from "../components/Home/GameSlideshow";
 import GameModal from "../components/Modal/GameModal";
 import LoginModal from "../components/Modal/LoginModal";
@@ -55,7 +56,7 @@ const Home = () => {
 
   const callbackGetStatus = (result) => {
     if (result.status === 500 || result.status === 422) {
-      
+
     } else {
       setTopGames(result.top_hot);
       setTopLiveCasino(result.top_livecasino);
@@ -71,7 +72,7 @@ const Home = () => {
 
   const callbackGetPage = (result) => {
     if (result.status === 500 || result.status === 422) {
-      
+
     } else {
       setCategories(result.data.categories);
       setPageData(result.data);
@@ -135,7 +136,7 @@ const Home = () => {
 
   const callbackFetchContent = (result) => {
     if (result.status === 500 || result.status === 422) {
-      
+
     } else {
       if (pageCurrent === 0) {
         configureImageSrc(result);
@@ -219,24 +220,15 @@ const Home = () => {
         />
       ) : (
         <>
-          <div className="landingPage">
-            <div className="root-container" id="pageContainer">
-              <div className="root-wrapper">
-                <div className="page">
-                  { topLiveCasino.length > 0 && <GameSlideshow games={topLiveCasino} name="liveCasino" title="Juegos en vivo principales" link="/live-casino" onGameClick={(game) => {
-                    if (isLogin) {
-                      launchGame(game, "slot", "tab");
-                    } else {
-                      setShowLoginModal(true);
-                    }
-                  }} /> }
-                  { topGames.length > 0 && <GameSlideshow games={topGames} name="casino" title="Juegos más populares" link="/casino" onGameClick={(game) => {
-                    if (isLogin) {
-                      launchGame(game, "slot", "tab");
-                    } else {
-                      setShowLoginModal(true);
-                    }
-                  }} /> }
+          <div className="overflow-x-hidden [grid-area:main] pt-4">
+            <div className="grid grid-rows-[max-content] [grid-template-areas:_'left-column'_'main-column'_'right-column'] lg:grid-cols-[auto_1fr_auto] lg:[grid-template-areas:_'left-column_main-column_right-column']">
+              <div className="max-w-[100vw] [grid-area:main-column]">
+                <div className="flex flex-col gap-4">
+                  <div className="gap-4 container md:grid md:grid-cols-1">
+                    <div className="flex flex-col">
+                      <DropWins />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

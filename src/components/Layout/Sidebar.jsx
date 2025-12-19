@@ -137,7 +137,7 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
                   href: "/casino",
                   subItems: [
                       { name: "Lobby", href: "/casino#home" },
-                      { name: "Populares", href: "/casino#hot" },
+                      { name: "Hot", href: "/casino#hot" },
                       { name: "Jokers", href: "/casino#joker" },
                       { name: "Juegos de Crash", href: "/casino#arcade" },
                       { name: "Megaways", href: "/casino#megaways" },
@@ -170,7 +170,7 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
                   href: "/casino",
                   subItems: [
                       { name: "Lobby", href: "/casino#home" },
-                      { name: "Populares", href: "/casino#hot" },
+                      { name: "Hot", href: "/casino#hot" },
                       { name: "Jokers", href: "/casino#joker" },
                       { name: "Juegos de Crash", href: "/casino#arcade" },
                       { name: "Megaways", href: "/casino#megaways" },
@@ -286,7 +286,7 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
                                                                                     >
                                                                                         <div className="flex items-center gap-2">
                                                                                             <span className="relative block">{sub.name}</span>
-                                                                                            {sub.name === "Juegos de Crash" && (
+                                                                                            {sub.name === "Hot" && (
                                                                                                 <span className="inline-flex items-center ring-primary-500 font-semibold rounded-[2.5rem] !leading-tight px-1.5 py-0.5 text-[0.625rem] leading-[normal] gap-0.5 text-dark-grey-900 bg-theme-secondary">
                                                                                                     POPULARES
                                                                                                 </span>
@@ -342,7 +342,7 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
                             >
                                 <div className="flex items-center gap-2">
                                     <span className="relative block">{sub.name}</span>
-                                    {sub.name === "Juegos de Crash" && (
+                                    {sub.name === "Hot" && (
                                         <span className="inline-flex items-center ring-primary-500 font-semibold rounded-[2.5rem] !leading-tight px-1.5 py-0.5 text-[0.625rem] leading-[normal] gap-0.5 text-dark-grey-900 bg-theme-secondary">
                                             POPULARES
                                         </span>
