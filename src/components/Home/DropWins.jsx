@@ -20,7 +20,7 @@ const DropWins = () => {
                                             Entrega de premios y torneos, ¡premios en metálico durante todo el día!
                                         </p>
                                         <a
-                                            href="/es/promociones/casino/drops-wins"
+                                            href="#"
                                             className="z-[2] inline-flex items-center justify-center gap-3 rounded-lg bg-white p-2 font-bold text-theme-primary-950 transition hover:bg-theme-secondary-600 hover:text-theme-primary-950 lg:px-4 lg:py-3"
                                         >
                                             Leer Más
@@ -63,7 +63,7 @@ const DropWins = () => {
 
                                     <div>
                                         <a
-                                            href="/es/promociones/sports/unete-a-fortuna"
+                                            href="#"
                                             className="aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full flex-shrink-0 text-ellipsis ring-0 font-bold rounded-lg text-base gap-3 text-theme-primary-950 disabled:bg-theme-secondary-500 disabled:text-theme-primary-950 disabled:opacity-30 focus-visible:outline-theme-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus:outline-theme-secondary-500/20 focus:outline focus:outline-4 hover:bg-theme-secondary-600 hover:text-theme-primary-950 inline-flex items-center justify-center relative z-[2] bg-white p-2"
                                         >
                                             <svg

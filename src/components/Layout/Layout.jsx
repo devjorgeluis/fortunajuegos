@@ -24,6 +24,10 @@ const Layout = () => {
     const [supportParent, setSupportParent] = useState("");
     const [showSupportModal, setShowSupportModal] = useState(false);
     const [supportParentOnly, setSupportParentOnly] = useState(false);
+    const [topGames, setTopGames] = useState([]);
+    const [topArcade, setTopArcade] = useState([]);
+    const [topCasino, setTopCasino] = useState([]);
+    const [topLiveCasino, setTopLiveCasino] = useState([]);
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [isSlotsOnly, setIsSlotsOnly] = useState("");
     const [showFullDivLoading, setShowFullDivLoading] = useState(false);
@@ -127,6 +131,10 @@ const Layout = () => {
         setSupportTelegram(result && result.support_telegram ? result.support_telegram : "");
         setSupportEmail(result && result.support_email ? result.support_email : "");
         setSupportParent(result && result.support_parent ? result.support_parent : "");
+        setTopGames(result.top_hot);
+        setTopArcade(result.top_arcade);
+        setTopCasino(result.top_slot);
+        setTopLiveCasino(result.top_livecasino);
 
         if (result && result.user === null) {
             localStorage.removeItem("session");
@@ -203,7 +211,7 @@ const Layout = () => {
                         openSupportModal={openSupportModal}
                     />
                     <Sidebar isSlotsOnly={isSlotsOnly} isMobile={isMobile} supportParent={supportParent} openSupportModal={openSupportModal} />
-                    <Outlet context={{ isSlotsOnly, isMobile }} />
+                    <Outlet context={{ isSlotsOnly, isMobile, topGames, topArcade, topCasino, topLiveCasino }} />
                     {showMobileSearch && isMobile && (
                         <MobileSearch
                             isLogin={isLogin}

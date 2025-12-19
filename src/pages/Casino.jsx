@@ -7,6 +7,7 @@ import { callApi } from "../utils/Utils";
 import GameCard from "/src/components/GameCard";
 import CategoryContainer from "../components/CategoryContainer";
 import GameModal from "../components/Modal/GameModal";
+import Hero from "../components/Casino/Hero";
 import Footer from "../components/Layout/Footer";
 import LoadGames from "../components/Loading/LoadGames";
 import SearchInput from "../components/SearchInput";
@@ -88,19 +89,19 @@ const Casino = () => {
     const isSlotsOnlyFalse = isSlotsOnly === false || isSlotsOnly === "false";
     let tmpTags = isSlotsOnlyFalse
       ? [
-          { name: "Lobby", code: "home" },
-          { name: "Hot", code: "hot" },
-          { name: "Jokers", code: "joker" },
-          { name: "Juegos de crash", code: "arcade" },
-          { name: "Megaways", code: "megaways" },
-          { name: "Ruletas", code: "roulette" },
-        ]
+        { name: "Lobby", code: "home" },
+        { name: "Hot", code: "hot" },
+        { name: "Jokers", code: "joker" },
+        { name: "Juegos de crash", code: "arcade" },
+        { name: "Megaways", code: "megaways" },
+        { name: "Ruletas", code: "roulette" },
+      ]
       : [
-          { name: "Lobby", code: "home" },
-          { name: "Hot", code: "hot" },
-          { name: "Jokers", code: "joker" },
-          { name: "Megaways", code: "megaways" },
-        ];
+        { name: "Lobby", code: "home" },
+        { name: "Hot", code: "hot" },
+        { name: "Jokers", code: "joker" },
+        { name: "Megaways", code: "megaways" },
+      ];
 
     setTags(tmpTags);
   }, [isSlotsOnly]);
@@ -444,181 +445,13 @@ const Casino = () => {
         />
       ) : (
         <>
-          <div className={`root-container ${isMobile ? 'mobile' : ''}`} id="pageContainer">
-            <div className="root-wrapper">
-              <div className="page">
-                <div className="casino-container">
-                  <div className="container-fluid search-and-filter-wrapper" id="casinoFilterWrapper">
-                    <div className="container search-and-filter-container">
-                      <div className="row">
-                        <div className="col-md-9 filter-column">
-                          <div className="container">
-                            <div className="casino-filters-container" id="casinoFiltersContainer">
-                              <div
-                                className="casino-filter"
-                                onClick={() => setIsProviderDropdownOpen(!isProviderDropdownOpen)}
-                              >
-                                Proveedores <i className="material-icons">arrow_drop_down</i>
-                              </div>
-                              <div className="casino-filter">Funciones <i className="material-icons">arrow_drop_down</i></div>
-                            </div>
-                          </div>
-                          {isProviderDropdownOpen && (
-                            <SearchSelect
-                              categories={categories}
-                              selectedProvider={selectedProvider}
-                              setSelectedProvider={setSelectedProvider}
-                              isProviderDropdownOpen={isProviderDropdownOpen}
-                              setIsProviderDropdownOpen={setIsProviderDropdownOpen}
-                              onProviderSelect={handleProviderSelect}
-                            />
-                          )}
-                        </div>
-                        <div className="col-md-3 search-column">
-                          <SearchInput
-                            txtSearch={txtSearch}
-                            setTxtSearch={setTxtSearch}
-                            searchRef={searchRef}
-                            search={search}
-                            clearSearch={clearSearch}
-                            isMobile={isMobile}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {tags.length > 0 && txtSearch === "" && selectedProvider === null && !isExplicitSingleCategoryView && (
-                    <CategoryContainer
-                      categories={tags}
-                      selectedCategoryIndex={selectedCategoryIndex}
-                      onCategoryClick={(tag, _id, _table, index) => {
-                        if (window.location.hash !== `#${tag.code}`) {
-                          window.location.hash = `#${tag.code}`;
-                        } else {
-                          setSelectedCategoryIndex(index);
-                          setIsSingleCategoryView(false);
-                          setIsExplicitSingleCategoryView(false);
-                          getPage(tag.code);
-                        }
-                      }}
-                      onCategorySelect={handleCategorySelect}
-                      isMobile={isMobile}
-                      pageType="casino"
-                    />
-                  )}
-                  <div className="casino-tab-view">
-                    <div className="main-container">
-                      <div className="container container-fluid">
-                        {(txtSearch !== "" || selectedProvider || isExplicitSingleCategoryView) ? (
-                          <>
-                            <div className={`container categories-container ${isMobile ? 'mobile' : ''}`}>
-                              <ul className={`navbar-nav flex-row casino-lobby-categories row ${isMobile ? 'mobile' : ''}`}>
-                                <li className="nav-item" onClick={clearSearch}>
-                                  <a className="nav-link">
-                                    <i className="material-icons">chevron_left</i>
-                                    <span className="title">Volver a todos los juegos</span>
-                                  </a>
-                                </li>
-                              </ul>
-                            </div>
-                            <div className="row">
-                              <div className="col-12 mb-5">
-                                <div className="filter-description" aria-live="polite">
-                                  Mostrando juegos
-                                  {selectedProvider && (
-                                    <span>
-                                      de <h1>{selectedProvider.name}</h1>
-                                    </span>
-                                  )}
-                                  {txtSearch !== "" && (
-                                    <span>
-                                      búsqueda que coincide con “<h1>{txtSearch}</h1>”
-                                    </span>
-                                  )}
-                                  {isExplicitSingleCategoryView && !selectedProvider && txtSearch === "" && (
-                                    <span>
-                                      de <h1>{activeCategory?.name || 'Categoría'}</h1>
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="casino-games-container">
-                              <div className="row games-list popular">
-                                {games.map((game) => (
-                                  <GameCard
-                                    key={game.id}
-                                    id={game.id}
-                                    provider={activeCategory?.name || 'Casino'}
-                                    title={game.name}
-                                    imageSrc={game.image_local !== null ? contextData.cdnUrl + game.image_local : game.image_url}
-                                    mobileShowMore={mobileShowMore}
-                                    onClick={() => (isLogin ? launchGame(game, "slot", "tab") : handleLoginClick())}
-                                  />
-                                ))}
-                              </div>
-                            </div>
-                            {isLoadingGames && <LoadGames />}
-                            {(isExplicitSingleCategoryView || txtSearch !== "" || selectedProvider) && hasMoreGames && (
-                              <div className="text-center">
-                                <a className="btn btn-success load-more" onClick={loadMoreGames}>
-                                  Mostrar todo
-                                </a>
-                              </div>
-                            )}
-                          </>
-                        ) : (
-                          <>
-                            <div className="casino-games-container">
-                              {isSingleCategoryView ? (
-                                <div className="row games-list popular">
-                                  {games.map((game) => (
-                                    <GameCard
-                                      key={game.id}
-                                      id={game.id}
-                                      provider={activeCategory?.name || 'Casino'}
-                                      title={game.name}
-                                      imageSrc={game.image_local !== null ? contextData.cdnUrl + game.image_local : game.image_url}
-                                      mobileShowMore={mobileShowMore}
-                                      onClick={() => (isLogin ? launchGame(game, "slot", "tab") : handleLoginClick())}
-                                    />
-                                  ))}
-                                </div>
-                              ) : (
-                                firstFiveCategoriesGames && firstFiveCategoriesGames.map((entry, catIndex) => {
-                                  if (!entry || !entry.games) return null;
-                                  const categoryKey = entry.category?.id || `cat-${catIndex}`;
-
-                                  return (
-                                    <div className="category-block" key={categoryKey}>
-                                      <div className="row games-list popular">
-                                        <h2>
-                                          {entry?.category?.name || ''}
-                                          <a className="show-all" onClick={() => loadMoreContent(entry.category, catIndex)}>Mostrar todo</a>
-                                        </h2>
-                                      </div>
-                                      <div className={`row games-list popular ${mobileShowMore ? '' : 'limited-games-list'}`}>
-                                        {entry.games.slice(0, 5).map((game) => (
-                                          <GameCard
-                                            key={game.id}
-                                            id={game.id}
-                                            provider={entry.category?.name || 'Casino'}
-                                            title={game.name}
-                                            imageSrc={game.image_local !== null ? contextData.cdnUrl + game.image_local : game.image_url}
-                                            mobileShowMore={mobileShowMore}
-                                            onClick={() => (isLogin ? launchGame(game, "slot", "tab") : handleLoginClick())}
-                                          />
-                                        ))}
-                                      </div>
-                                    </div>
-                                  );
-                                })
-                              )}
-                            </div>
-                            {isLoadingGames && <LoadGames />}
-                          </>
-                        )}
-                      </div>
+          <div className="overflow-x-hidden [grid-area:main] pt-4">
+            <div className="grid grid-rows-[max-content] [grid-template-areas:_'left-column'_'main-column'_'right-column'] lg:grid-cols-[auto_1fr_auto] lg:[grid-template-areas:_'left-column_main-column_right-column']">
+              <div className="max-w-[100vw] [grid-area:main-column]">
+                <div className="flex flex-col gap-4">
+                  <div className="gap-4 container md:grid md:grid-cols-1">
+                    <div className="flex flex-col">
+                      <Hero />
                     </div>
                   </div>
                 </div>
