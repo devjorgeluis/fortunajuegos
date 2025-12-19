@@ -1,3 +1,7 @@
+import ImgDropWinsBackground from "/src/assets/img/drop-wins-background.webp";
+import ImgJoinFortuna from "/src/assets/img/join-fortuna.webp";
+import ImgPrepayment from "/src/assets/img/prepayment.webp";
+
 const DropWins = () => {
     return (
         <div className="mb-10 [&_.scroll-snap-slider]:[grid-template-areas:'first_second''first_third']">
@@ -26,16 +30,16 @@ const DropWins = () => {
 
                                 <div className="[mask-image:linear-gradient(to_left,#000_48%,transparent_98%)] absolute bottom-0 right-0 top-0 w-[66%] rounded-r-2xl sm:w-[84%] sm:rounded-r-3xl lg:w-1/2">
                                     <picture>
-                                        <source media="(min-width: 2400px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/b9cd3902-d945-4050-aa46-46977eb5865b.webp?quality=90&sharpen=true&width=2400" />
-                                        <source media="(min-width: 1920px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/b9cd3902-d945-4050-aa46-46977eb5865b.webp?quality=90&sharpen=true&width=1920" />
-                                        <source media="(min-width: 1400px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/b9cd3902-d945-4050-aa46-46977eb5865b.webp?quality=90&sharpen=true&width=1400" />
-                                        <source media="(min-width: 1280px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/b9cd3902-d945-4050-aa46-46977eb5865b.webp?quality=90&sharpen=true&width=1280" />
-                                        <source media="(min-width: 960px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/b9cd3902-d945-4050-aa46-46977eb5865b.webp?quality=90&sharpen=true&width=960" />
-                                        <source media="(min-width: 640px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/b9cd3902-d945-4050-aa46-46977eb5865b.webp?quality=90&sharpen=true&width=768" />
-                                        <source media="(min-width: 480px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/b9cd3902-d945-4050-aa46-46977eb5865b.webp?quality=90&sharpen=true&width=576" />
-                                        <source media="(min-width: 360px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/b9cd3902-d945-4050-aa46-46977eb5865b.webp?quality=90&sharpen=true&width=432" />
+                                        <source media="(min-width: 2400px)" srcSet={ImgDropWinsBackground} />
+                                        <source media="(min-width: 1920px)" srcSet={ImgDropWinsBackground} />
+                                        <source media="(min-width: 1400px)" srcSet={ImgDropWinsBackground} />
+                                        <source media="(min-width: 1280px)" srcSet={ImgDropWinsBackground} />
+                                        <source media="(min-width: 960px)" srcSet={ImgDropWinsBackground} />
+                                        <source media="(min-width: 640px)" srcSet={ImgDropWinsBackground} />
+                                        <source media="(min-width: 480px)" srcSet={ImgDropWinsBackground}/>
+                                        <source media="(min-width: 360px)" srcSet={ImgDropWinsBackground} />
                                         <img
-                                            src="https://engagefactory.b-cdn.net/entart/fortunajuegos/b9cd3902-d945-4050-aa46-46977eb5865b.webp?quality=90&sharpen=true"
+                                            src={ImgDropWinsBackground}
                                             alt="Drops & Wins - Torneos y premios diarios"
                                             className="h-full w-full rounded-r-2xl object-cover transition-transform group-hover:scale-125 sm:rounded-r-3xl"
                                             loading="eager"
@@ -78,38 +82,38 @@ const DropWins = () => {
                                     <picture>
                                         <source
                                             media="(min-width: 2400px)"
-                                            srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/b2552fb6-c285-445d-8588-002f3824e3cd.webp?quality=90&sharpen=true&width=2400"
+                                            srcSet={ImgJoinFortuna}
                                         />
                                         <source
                                             media="(min-width: 1920px)"
-                                            srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/b2552fb6-c285-445d-8588-002f3824e3cd.webp?quality=90&sharpen=true&width=1920"
+                                            srcSet={ImgJoinFortuna}
                                         />
                                         <source
                                             media="(min-width: 1400px)"
-                                            srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/b2552fb6-c285-445d-8588-002f3824e3cd.webp?quality=90&sharpen=true&width=1400"
+                                            srcSet={ImgJoinFortuna}
                                         />
                                         <source
                                             media="(min-width: 1280px)"
-                                            srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/b2552fb6-c285-445d-8588-002f3824e3cd.webp?quality=90&sharpen=true&width=1280"
+                                            srcSet={ImgJoinFortuna}
                                         />
                                         <source
                                             media="(min-width: 960px)"
-                                            srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/b2552fb6-c285-445d-8588-002f3824e3cd.webp?quality=90&sharpen=true&width=960"
+                                            srcSet={ImgJoinFortuna}
                                         />
                                         <source
                                             media="(min-width: 640px)"
-                                            srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/b2552fb6-c285-445d-8588-002f3824e3cd.webp?quality=90&sharpen=true&width=768"
+                                            srcSet={ImgJoinFortuna}
                                         />
                                         <source
                                             media="(min-width: 480px)"
-                                            srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/b2552fb6-c285-445d-8588-002f3824e3cd.webp?quality=90&sharpen=true&width=576"
+                                            srcSet={ImgJoinFortuna}
                                         />
                                         <source
                                             media="(min-width: 360px)"
-                                            srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/b2552fb6-c285-445d-8588-002f3824e3cd.webp?quality=90&sharpen=true&width=432"
+                                            srcSet={ImgJoinFortuna}
                                         />
                                         <img
-                                            src="https://engagefactory.b-cdn.net/entart/fortunajuegos/b2552fb6-c285-445d-8588-002f3824e3cd.webp?quality=90&sharpen=true"
+                                            src={ImgJoinFortuna}
                                             alt="Únete a FORTUNA - Promoción deportiva"
                                             className="h-full w-full rounded-r-xl object-cover transition-transform duration-500 group-hover:scale-125 sm:rounded-r-3xl"
                                             loading="eager"
@@ -156,16 +160,16 @@ const DropWins = () => {
 
                                 <div className="[mask-image:linear-gradient(to_left,#000_48%,transparent_98%)] absolute bottom-0 right-0 top-0 w-[66%] rounded-r-xl sm:rounded-r-3xl">
                                     <picture>
-                                        <source media="(min-width: 2400px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/591ffda2-bece-4dfd-8251-95f83b485e51.webp?quality=90&sharpen=true&width=2400" />
-                                        <source media="(min-width: 1920px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/591ffda2-bece-4dfd-8251-95f83b485e51.webp?quality=90&sharpen=true&width=1920" />
-                                        <source media="(min-width: 1400px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/591ffda2-bece-4dfd-8251-95f83b485e51.webp?quality=90&sharpen=true&width=1400" />
-                                        <source media="(min-width: 1280px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/591ffda2-bece-4dfd-8251-95f83b485e51.webp?quality=90&sharpen=true&width=1280" />
-                                        <source media="(min-width: 960px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/591ffda2-bece-4dfd-8251-95f83b485e51.webp?quality=90&sharpen=true&width=960" />
-                                        <source media="(min-width: 640px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/591ffda2-bece-4dfd-8251-95f83b485e51.webp?quality=90&sharpen=true&width=768" />
-                                        <source media="(min-width: 480px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/591ffda2-bece-4dfd-8251-95f83b485e51.webp?quality=90&sharpen=true&width=576" />
-                                        <source media="(min-width: 360px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/591ffda2-bece-4dfd-8251-95f83b485e51.webp?quality=90&sharpen=true&width=432" />
+                                        <source media="(min-width: 2400px)" srcSet={ImgPrepayment} />
+                                        <source media="(min-width: 1920px)" srcSet={ImgPrepayment} />
+                                        <source media="(min-width: 1400px)" srcSet={ImgPrepayment} />
+                                        <source media="(min-width: 1280px)" srcSet={ImgPrepayment} />
+                                        <source media="(min-width: 960px)" srcSet={ImgPrepayment} />
+                                        <source media="(min-width: 640px)" srcSet={ImgPrepayment} />
+                                        <source media="(min-width: 480px)" srcSet={ImgPrepayment} />
+                                        <source media="(min-width: 360px)" srcSet={ImgPrepayment} />
                                         <img
-                                            src="https://engagefactory.b-cdn.net/entart/fortunajuegos/591ffda2-bece-4dfd-8251-95f83b485e51.webp?quality=90&sharpen=true"
+                                            src={ImgPrepayment}
                                             alt="Pago Anticipado - Gana antes de tiempo"
                                             className="h-full w-full rounded-r-xl object-cover transition-transform group-hover:scale-125 sm:rounded-r-3xl"
                                             loading="eager"

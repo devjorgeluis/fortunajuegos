@@ -79,15 +79,15 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
     const handleMouseEnter = (itemId, event) => {
         if (!isSidebarExpanded) {
             clearTimeout(hoverTimeoutRef.current);
-            
+
             const iconElement = event.currentTarget;
             const rect = iconElement.getBoundingClientRect();
-            
+
             setPopoverPosition({
                 top: rect.top + window.scrollY,
                 left: rect.right + 16,
             });
-            
+
             hoverTimeoutRef.current = setTimeout(() => {
                 setHoveredMenu(itemId);
                 setIsPopoverVisible(true);
@@ -98,16 +98,16 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
     const handleMouseLeave = (event) => {
         if (!isSidebarExpanded) {
             clearTimeout(hoverTimeoutRef.current);
-            
+
             // Check if mouse is moving to popover
             const relatedTarget = event.relatedTarget;
             const popoverElement = popoverRef.current;
-            
+
             if (popoverElement && popoverElement.contains(relatedTarget)) {
                 // Mouse is moving to popover, keep it open
                 return;
             }
-            
+
             hoverTimeoutRef.current = setTimeout(() => {
                 setIsPopoverVisible(false);
                 setHoveredMenu(null);
@@ -130,61 +130,60 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
 
     const menuItems = !isSlotsOnlyMode
         ? [
-              {
-                  id: "casino",
-                  name: "Casino",
-                  image: ImgCasino,
-                  href: "/casino",
-                  subItems: [
-                      { name: "Lobby", href: "/casino#home" },
-                      { name: "Hot", href: "/casino#hot" },
-                      { name: "Jokers", href: "/casino#joker" },
-                      { name: "Juegos de Crash", href: "/casino#arcade" },
-                      { name: "Megaways", href: "/casino#megaways" },
-                      { name: "Ruletas", href: "/casino#roulette" },
-                  ],
-              },
-              {
-                  id: "live-casino",
-                  name: "Casino en Vivo",
-                  image: ImgLiveCasino,
-                  href: "/live-casino",
-                  subItems: liveCasinoMenus,
-              },
-              {
-                  id: "sports",
-                  name: "Deportes",
-                  image: ImgSports,
-                  href: "/sports",
-                  subItems: [
-                      { name: "Inicio", href: "/sports" },
-                      { name: "En Vivo", href: "/live-sports" },
-                  ],
-              },
-          ]
+            {
+                id: "casino",
+                name: "Casino",
+                image: ImgCasino,
+                href: "/casino",
+                subItems: [
+                    { name: "Lobby", href: "/casino#home" },
+                    { name: "Hot", href: "/casino#hot" },
+                    { name: "Jokers", href: "/casino#joker" },
+                    { name: "Juegos de Crash", href: "/casino#arcade" },
+                    { name: "Megaways", href: "/casino#megaways" },
+                    { name: "Ruletas", href: "/casino#roulette" },
+                ],
+            },
+            {
+                id: "live-casino",
+                name: "Casino en Vivo",
+                image: ImgLiveCasino,
+                href: "/live-casino",
+                subItems: liveCasinoMenus,
+            },
+            {
+                id: "sports",
+                name: "Deportes",
+                image: ImgSports,
+                href: "/sports",
+                subItems: [
+                    { name: "Inicio", href: "/sports" },
+                    { name: "En Vivo", href: "/live-sports" },
+                ],
+            },
+        ]
         : [
-              {
-                  id: "casino",
-                  name: "Casino",
-                  image: ImgCasino,
-                  href: "/casino",
-                  subItems: [
-                      { name: "Lobby", href: "/casino#home" },
-                      { name: "Hot", href: "/casino#hot" },
-                      { name: "Jokers", href: "/casino#joker" },
-                      { name: "Juegos de Crash", href: "/casino#arcade" },
-                      { name: "Megaways", href: "/casino#megaways" },
-                      { name: "Ruletas", href: "/casino#roulette" },
-                  ],
-              },
-          ];
+            {
+                id: "casino",
+                name: "Casino",
+                image: ImgCasino,
+                href: "/casino",
+                subItems: [
+                    { name: "Lobby", href: "/casino#home" },
+                    { name: "Hot", href: "/casino#hot" },
+                    { name: "Jokers", href: "/casino#joker" },
+                    { name: "Juegos de Crash", href: "/casino#arcade" },
+                    { name: "Megaways", href: "/casino#megaways" },
+                    { name: "Ruletas", href: "/casino#roulette" },
+                ],
+            },
+        ];
 
     return (
         <>
             <aside
-                className={`bg-primary-900 text-primary-50 border-theme-secondary/10 z-50 flex h-full flex-col justify-between gap-4 border-r text-base [grid-area:_nav] sticky top-[var(--header-height)] max-h-[calc(100svh-var(--header-height))] min-h-[unset] lg:max-w-[15rem] transition-all duration-300 ${
-                    isSidebarExpanded ? "w-[16rem]" : "w-[4.25rem]"
-                }`}
+                className={`bg-primary-900 text-primary-50 border-theme-secondary/10 z-50 flex h-full flex-col justify-between gap-4 border-r text-base [grid-area:_nav] sticky top-[var(--header-height)] max-h-[calc(100svh-var(--header-height))] min-h-[unset] lg:max-w-[15rem] transition-all duration-300 ${isSidebarExpanded ? "w-[16rem]" : "w-[4.25rem]"
+                    }`}
             >
                 <div className="w-full !overflow-x-clip h-full px-2 pb-0 pt-2 sm:p-12 sm:pb-0 sm:px-2 sm:pt-2">
                     <div className="w-full h-full relative">
@@ -209,11 +208,10 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
                                             {/* Icon Button */}
                                             <a
                                                 href={item.href}
-                                                className={`text-theme-secondary ring-theme-secondary/10 flex aspect-square w-full items-center justify-center gap-2.5 rounded-2xl p-4 ring-1 transition duration-75 hover:ring-theme-secondary hover:cursor-pointer ${
-                                                    item.id === "casino" || item.id === "live-casino"
+                                                className={`text-theme-secondary ring-theme-secondary/10 flex aspect-square w-full items-center justify-center gap-2.5 rounded-2xl p-4 ring-1 transition duration-75 hover:ring-theme-secondary hover:cursor-pointer ${item.id === "casino" || item.id === "live-casino"
                                                         ? "bg-theme-secondary/20"
                                                         : "bg-transparent"
-                                                }`}
+                                                    }`}
                                             >
                                                 <img src={item.image} alt={item.name} className="h-5 w-5" />
                                             </a>
@@ -248,9 +246,8 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
                                                         </a>
 
                                                         <svg
-                                                            className={`iconify iconify--tabler bg-theme-secondary-300/10 h-6 w-6 rounded p-1 text-theme-secondary transition-transform duration-200 ${
-                                                                isMenuExpanded(item.id) ? "rotate-180" : ""
-                                                            }`}
+                                                            className={`iconify iconify--tabler bg-theme-secondary-300/10 h-6 w-6 rounded p-1 text-theme-secondary transition-transform duration-200 ${isMenuExpanded(item.id) ? "rotate-180" : ""
+                                                                }`}
                                                             viewBox="0 0 24 24"
                                                         >
                                                             <path
@@ -277,12 +274,11 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
                                                                                 <div className="relative inline-flex items-center justify-center flex-shrink-0 w-full">
                                                                                     <a
                                                                                         href={sub.href}
-                                                                                        className={`hover:bg-theme-secondary/5 justify-between overflow-hidden rounded-xl px-4 py-3 text-base font-normal !leading-tight text-white lg:text-sm h-[3.25rem] hover:text-white flex w-full items-center gap-2 ${
-                                                                                            activeSubmenuItem === sub.code ||
-                                                                                            location.hash.slice(1) === sub.href.split("#")[1]
+                                                                                        className={`hover:bg-theme-secondary/5 justify-between overflow-hidden rounded-xl px-4 py-3 text-base font-normal !leading-tight text-white lg:text-sm h-[3.25rem] hover:text-white flex w-full items-center gap-2 ${activeSubmenuItem === sub.code ||
+                                                                                                location.hash.slice(1) === sub.href.split("#")[1]
                                                                                                 ? "bg-theme-secondary/10"
                                                                                                 : ""
-                                                                                        }`}
+                                                                                            }`}
                                                                                     >
                                                                                         <div className="flex items-center gap-2">
                                                                                             <span className="relative block">{sub.name}</span>

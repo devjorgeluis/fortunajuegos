@@ -5,10 +5,22 @@ import { LayoutContext } from "../components/Layout/LayoutContext";
 import { NavigationContext } from "../components/Layout/NavigationContext";
 import { callApi } from "../utils/Utils";
 import DropWins from "../components/Home/DropWins";
+import PopularGames from "../components/Home/PopularGames";
+import GameCategories from "../components/Home/GameCategories";
 import GameSlideshow from "../components/Home/GameSlideshow";
 import GameModal from "../components/Modal/GameModal";
 import LoginModal from "../components/Modal/LoginModal";
 import "animate.css";
+
+import ImgLogoTransparent from "/src/assets/svg/logo-transparent.svg";
+import ImgCategoryBackground1 from "/src/assets/img/category-background1.webp";
+import ImgCategoryBackground2 from "/src/assets/img/category-background2.webp";
+import ImgCategoryBackground3 from "/src/assets/img/category-background3.webp";
+import ImgCategoryBackground4 from "/src/assets/img/category-background4.webp";
+import ImgCategory1 from "/src/assets/img/category1.webp";
+import ImgCategory2 from "/src/assets/img/category2.webp";
+import ImgCategory3 from "/src/assets/img/category3.webp";
+import ImgCategory4 from "/src/assets/img/category4.webp";
 
 let selectedGameId = null;
 let selectedGameType = null;
@@ -22,6 +34,7 @@ const Home = () => {
   const { isLogin } = useContext(LayoutContext);
   const { setShowFullDivLoading } = useContext(NavigationContext);
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
+  const [tags, setTags] = useState([]);
   const [games, setGames] = useState([]);
   const [topGames, setTopGames] = useState([]);
   const [topLiveCasino, setTopLiveCasino] = useState([]);
@@ -33,7 +46,30 @@ const Home = () => {
   const [shouldShowGameModal, setShouldShowGameModal] = useState(false);
   const [isGameLoadingError, setIsGameLoadingError] = useState(false);
   const refGameModal = useRef();
-  const { isSlotsOnly } = useOutletContext();
+  const { isSlotsOnly, isMobile } = useOutletContext();
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        const currentPath = window.location.pathname;
+        if (currentPath === '/' || currentPath === '') {
+          getPage("home");
+          getStatus();
+
+          selectedGameId = null;
+          selectedGameType = null;
+          selectedGameLauncher = null;
+          setShouldShowGameModal(false);
+          setGameUrl("");
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
 
   useEffect(() => {
     selectedGameId = null;
@@ -49,6 +85,24 @@ const Home = () => {
 
     window.scrollTo(0, 0);
   }, [location.pathname]);
+
+  useEffect(() => {
+    const isSlotsOnlyFalse = isSlotsOnly === false || isSlotsOnly === "false";
+    let tmpTags = isSlotsOnlyFalse
+      ? [
+        { name: "Populares", code: "hot", image: ImgCategory1, backgroundImage: ImgCategoryBackground1 },
+        { name: "Jokers", code: "joker", image: ImgCategory2, backgroundImage: ImgCategoryBackground2 },
+        { name: "Juegos de crash", code: "arcade", image: ImgCategory3, backgroundImage: ImgCategoryBackground3 },
+        { name: "Ruletas", code: "roulette", image: ImgCategory4, backgroundImage: ImgCategoryBackground4 },
+      ]
+      : [
+        { name: "Populares", code: "hot", image: ImgCategory1, backgroundImage: ImgCategoryBackground1 },
+        { name: "Jokers", code: "joker", image: ImgCategory2, backgroundImage: ImgCategoryBackground2 },
+        { name: "Megaways", code: "megaways", image: ImgCategory4, backgroundImage: ImgCategoryBackground4 },
+      ];
+
+    setTags(tmpTags);
+  }, [isSlotsOnly]);
 
   const getStatus = () => {
     callApi(contextData, "GET", "/get-status", callbackGetStatus, null);
@@ -227,6 +281,27 @@ const Home = () => {
                   <div className="gap-4 container md:grid md:grid-cols-1">
                     <div className="flex flex-col">
                       <DropWins />
+                      <PopularGames games={topGames} icon={ImgLogoTransparent} title="Juegos Populares" onGameClick={(game) => {
+                        if (isLogin) {
+                          launchGame(game, "slot", "tab");
+                        } else {
+                          setShowLoginModal(true);
+                        }
+                      }} />
+                      <GameCategories
+                        categories={tags}
+                        selectedCategoryIndex={selectedCategoryIndex}
+                        onCategoryClick={(tag, _id, _table, index) => {
+                          if (window.location.hash !== `#${tag.code}`) {
+                            window.location.hash = `#${tag.code}`;
+                          } else {
+                            setSelectedCategoryIndex(index);
+                            getPage(tag.code);
+                          }
+                        }}
+                        isMobile={isMobile}
+                        pageType="home"
+                      />
                     </div>
                   </div>
                 </div>
