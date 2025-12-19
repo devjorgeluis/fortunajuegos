@@ -11,6 +11,7 @@ import ProviderContainer from "../components/ProviderContainer";
 import Promotions from "../components/Home/Promotions";
 import GameModal from "../components/Modal/GameModal";
 import LoginModal from "../components/Modal/LoginModal";
+import Footer from "../components/Layout/Footer";
 import "animate.css";
 
 import ImgLogoTransparent from "/src/assets/svg/logo-transparent.svg";
@@ -345,6 +346,7 @@ const Home = () => {
                         onProviderSelect={handleProviderSelect}
                       />
                       <Promotions />
+                      <Footer />
                     </div>
                   </div>
                 </div>
