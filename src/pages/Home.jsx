@@ -8,7 +8,7 @@ import DropWins from "../components/Home/DropWins";
 import PopularGames from "../components/Home/PopularGames";
 import GameCategories from "../components/Home/GameCategories";
 import ProviderContainer from "../components/ProviderContainer";
-import GameSlideshow from "../components/Home/GameSlideshow";
+import Promotions from "../components/Home/Promotions";
 import GameModal from "../components/Modal/GameModal";
 import LoginModal from "../components/Modal/LoginModal";
 import "animate.css";
@@ -338,12 +338,13 @@ const Home = () => {
                         isMobile={isMobile}
                         pageType="home"
                       />
-                       <ProviderContainer
+                      <ProviderContainer
                         categories={categories}
                         selectedProvider={selectedProvider}
                         setSelectedProvider={setSelectedProvider}
                         onProviderSelect={handleProviderSelect}
                       />
+                      <Promotions />
                     </div>
                   </div>
                 </div>

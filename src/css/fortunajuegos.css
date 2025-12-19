@@ -6467,7 +6467,7 @@ a:hover {
 }
 
 .h-auto {
-    height: auto;
+    height: auto !important;
 }
 
 .h-dvh {
