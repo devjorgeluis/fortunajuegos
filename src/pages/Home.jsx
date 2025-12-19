@@ -7,6 +7,7 @@ import { callApi } from "../utils/Utils";
 import DropWins from "../components/Home/DropWins";
 import PopularGames from "../components/Home/PopularGames";
 import GameCategories from "../components/Home/GameCategories";
+import ProviderContainer from "../components/ProviderContainer";
 import GameSlideshow from "../components/Home/GameSlideshow";
 import GameModal from "../components/Modal/GameModal";
 import LoginModal from "../components/Modal/LoginModal";
@@ -40,6 +41,7 @@ const Home = () => {
   const [topLiveCasino, setTopLiveCasino] = useState([]);
   const [categories, setCategories] = useState([]);
   const [mainCategories, setMainCategories] = useState([]);
+  const [selectedProvider, setSelectedProvider] = useState(null);
   const [pageData, setPageData] = useState({});
   const [gameUrl, setGameUrl] = useState("");
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -130,6 +132,7 @@ const Home = () => {
     } else {
       setCategories(result.data.categories);
       setPageData(result.data);
+      setSelectedProvider(null);
 
       if (result.data.menu === "home") {
         setMainCategories(result.data.categories);
@@ -168,11 +171,9 @@ const Home = () => {
 
     setSelectedCategoryIndex(categoryIndex);
 
-    const groupCode = pageGroupCode || pageData.page_group_code;
+    const groupCode = pageGroupCode || pageData.page_group_code || "default_pages_home"
 
-    callApi(
-      contextData,
-      "GET",
+    let apiUrl =
       "/get-content?page_group_type=categories&page_group_code=" +
       groupCode +
       "&table_name=" +
@@ -182,10 +183,13 @@ const Home = () => {
       "&page=" +
       pageCurrent +
       "&length=" +
-      pageSize,
-      callbackFetchContent,
-      null
-    );
+      pageSize;
+
+    if (selectedProvider && selectedProvider.id) {
+      apiUrl += "&provider=" + selectedProvider.id;
+    }
+
+    callApi(contextData, "GET", apiUrl, callbackFetchContent, null);
   };
 
   const callbackFetchContent = (result) => {
@@ -252,6 +256,37 @@ const Home = () => {
     setShowLoginModal(false);
   };
 
+  const handleCategorySelect = () => {
+    setSelectedProvider(null);
+  };
+
+  const handleProviderSelect = (provider, index = 0) => {
+    setSelectedProvider(provider);
+
+    if (provider) {
+      setSelectedCategoryIndex(-1);
+
+      fetchContent(
+        provider,
+        provider.id,
+        provider.table_name,
+        index,
+        true
+      );
+
+      if (isMobile) {
+        setMobileShowMore(true);
+      }
+    } else {
+      const firstCategory = categories[0];
+      if (firstCategory) {
+        setActiveCategory(firstCategory);
+        setSelectedCategoryIndex(0);
+        fetchContent(firstCategory, firstCategory.id, firstCategory.table_name, 0, true);
+      }
+    }
+  };
+
   return (
     <>
       {showLoginModal && (
@@ -299,8 +334,15 @@ const Home = () => {
                             getPage(tag.code);
                           }
                         }}
+                        onCategorySelect={handleCategorySelect}
                         isMobile={isMobile}
                         pageType="home"
+                      />
+                       <ProviderContainer
+                        categories={categories}
+                        selectedProvider={selectedProvider}
+                        setSelectedProvider={setSelectedProvider}
+                        onProviderSelect={handleProviderSelect}
                       />
                     </div>
                   </div>
