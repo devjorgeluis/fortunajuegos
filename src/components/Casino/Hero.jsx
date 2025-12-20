@@ -35,7 +35,7 @@ const Hero = () => {
 
                                 <a
                                     href="#"
-                                    className="relative z-[2] inline-flex items-center justify-center gap-3 rounded-lg bg-theme-secondary-500 px-4 py-3 font-bold text-base text-theme-primary-950 hover:bg-theme-secondary-600"
+                                    className="aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full flex-shrink-0 text-ellipsis ring-0 rounded-lg gap-3 text-theme-primary-950 bg-theme-secondary-500 disabled:bg-theme-secondary-500 disabled:text-theme-primary-950 disabled:opacity-30 focus-visible:outline-theme-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus:outline-theme-secondary-500/20 focus:outline focus:outline-4 hover:bg-theme-secondary-600 hover:text-theme-primary-950 inline-flex items-center justify-center relative z-[2] px-4 py-3 text-base font-bold !leading-normal"
                                 >
                                     Leer más
                                 </a>

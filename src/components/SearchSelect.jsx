@@ -1,112 +1,67 @@
-import { useContext, useState, useEffect, useRef } from "react";
-import { AppContext } from "../AppContext";
+import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const SearchSelect = ({
     categories,
     setSelectedProvider,
-    isProviderDropdownOpen,
-    setIsProviderDropdownOpen,
-    onProviderSelect
+    onProviderSelect,
 }) => {
-    const { contextData } = useContext(AppContext);
-    const [searchStudio, setSearchStudio] = useState("");
     const navigate = useNavigate();
     const location = useLocation();
-    const isLiveCasino = location.pathname === "/livecasino"; // Fixed typo: "/live-casino" to "/livecasino"
-    const dropdownRef = useRef(null);
+    const isLiveCasino = location.pathname === "/livecasino";
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setIsProviderDropdownOpen(false);
+    const [selectedValue, setSelectedValue] = useState("_ALL_");
+
+    const handleChange = (e) => {
+        const value = e.target.value;
+        const provider = categories.find((cat) => cat.id?.toString() === value || cat.code === value);
+
+        if (provider) {
+            console.log(provider);
+            
+            setSelectedProvider(provider);
+            onProviderSelect(provider);
+            setSelectedValue(value);
+
+            if (isLiveCasino && provider.code) {
+                navigate(`#${provider.code}`);
             }
-        };
-
-        if (isProviderDropdownOpen) {
-            document.addEventListener("mousedown", handleClickOutside);
-        }
-
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [isProviderDropdownOpen, setIsProviderDropdownOpen]);
-
-    const handleProviderSelect = (provider, index = 0) => {
-        setSelectedProvider(provider);
-        setIsProviderDropdownOpen(false);
-        onProviderSelect(provider, index);
-        if (isLiveCasino) {
-            navigate("#" + provider.code);
         }
     };
 
-    const filteredCategories = categories.filter(provider => 
-        provider.name.toLowerCase().includes(searchStudio.toLowerCase())
-    );
-
     return (
-        <div className="filter-container studio-filter" ref={dropdownRef}>
-            <div className="filter-title-row" onClick={() => setIsProviderDropdownOpen(false)}>
-                <div className="close-container">
-                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20px" height="20px" viewBox="-36.5 91.5 648.5 684.99">
-                        <polygon
-                            className="icon-fill"
-                            points="356.28,433.98 599.55,167.05 611.11,154.38 599,142.22 562.78,105.85 549.45,92.47 536.72,106.43
-                                    287.76,379.61 38.77,106.43 26.04,92.46 12.71,105.86 -23.51,142.26 -35.61,154.41 -24.06,167.08 219.22,434.01 -24.05,700.94
-                                    -35.61,713.61 -23.5,725.76 12.72,762.13 26.05,775.52 38.78,761.56 287.74,488.38 536.73,761.56 549.46,775.53 562.79,762.13
-                                    599.01,725.73 611.11,713.58 599.56,700.91 "
-                        ></polygon>
-                    </svg>
+        <div className="col-span-12 group flex-grow min-w-0 text-base mb-1.5 formkit-outer !-mb-1.5 lg:min-w-[12.25rem] lg:max-w-[12.25rem]">
+            <div className="mb-1.5 formkit-wrapper">
+                <div className="relative rounded-lg bg-black/50 flex h-12 items-center border border-theme-secondary/10 focus-within:ring-2 group-data-[disabled]:!cursor-not-allowed formkit-inner">
+                    <select
+                        id="studio-select"
+                        value={selectedValue}
+                        onChange={handleChange}
+                        className="appearance-none grow py-3 pl-3 pr-12 h-12 text-base text-dark-grey-50 outline-none bg-transparent rounded-lg border-none focus:ring-0 cursor-pointer text-ellipsis max-w-full overflow-hidden formkit-input"
+                        aria-label="Seleccionar estudio de juegos"
+                    >
+                        {categories.map((provider) => (
+                            <option
+                                className="text-black group-data-[multiple]:text-sm group-data-[multiple]:outline-none group-data-[multiple]:border-none group-data-[multiple]:py-1.5 group-data-[multiple]:px-2 formkit-option"
+                                key={provider.id || provider.code}
+                                value={provider.id || provider.code}
+                            >
+                                {provider.name}
+                            </option>
+                        ))}
+                    </select>
+
+                    <span className="absolute w-6 text-theme-secondary pointer-events-none right-5 top-1/2 -translate-y-1/2 formkit-selectIcon formkit-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                fillRule="evenodd"
+                                clipRule="evenodd"
+                                d="M12.3977 15.203C12.178 15.4226 11.8219 15.4226 11.6022 15.203L5.86739 9.46808C5.64772 9.24841 5.64772 8.89231 5.86739 8.67263L6.13256 8.40743C6.35222 8.18776 6.70838 8.18776 6.92805 8.40743L12 13.4794L17.0719 8.40743C17.2916 8.18776 17.6477 8.18776 17.8674 8.40743L18.1326 8.67263C18.3522 8.89231 18.3522 9.24841 18.1326 9.46808L12.3977 15.203Z"
+                                fill="currentColor"
+                            />
+                        </svg>
+                    </span>
                 </div>
-                <div className="filter-title">Proveedores</div>
-            </div>
-            <div className="search-studio">
-                <input 
-                    className="form-control" 
-                    placeholder="Buscar" 
-                    value={searchStudio}
-                    onChange={(e) => setSearchStudio(e.target.value)}
-                />
-            </div>
-            <div className="filter-scroll-container">
-                <div style={{ position: 'relative', overflow: 'hidden', width: '100%', height: '100%' }}>
-                    <div style={{ position: 'absolute', inset: '0px', overflow: 'scroll', marginRight: '-15px', marginBottom: '-15px' }}>
-                        <div className="filter-scroll-inner">
-                            <div className="studio-container">
-                                <div className="section-title">Populares</div>
-                                {filteredCategories.map((provider, index) => (
-                                    <div key={index} className="studio-item" onClick={() => handleProviderSelect(provider, index)}>
-                                        <div className="studio-image">
-                                            {provider.image_local || provider.image_url ? (
-                                                <img
-                                                    alt={provider.name}
-                                                    loading="lazy"
-                                                    width="20"
-                                                    height="20"
-                                                    decoding="async"
-                                                    src={provider.image_local ? contextData.cdnUrl + provider.image_local : provider.image_url}
-                                                />
-                                            ) : (
-                                                <i className="custom-icon-bp-home"></i>
-                                            )}
-                                        </div>
-                                        <div className="studio-name">{provider.name}</div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                    <div style={{ position: 'absolute', height: '6px', right: '2px', bottom: '2px', left: '2px', borderRadius: '3px' }}>
-                        <div style={{ position: 'relative', display: 'block', height: '100%', cursor: 'pointer', borderRadius: 'inherit', backgroundColor: 'rgba(0, 0, 0, 0.2)', width: '0px' }}></div>
-                    </div>
-                    <div style={{ position: 'absolute', width: '6px', right: '2px', bottom: '2px', top: '2px', borderRadius: '3px' }}>
-                        <div style={{ position: 'relative', display: 'block', width: '100%', cursor: 'pointer', borderRadius: 'inherit', backgroundColor: 'rgba(0, 0, 0, 0.2)', height: '30px', transform: 'translateY(0px)' }}></div>
-                    </div>
-                </div>
-            </div>
-            <div className="action-container">
-                <a className="btn btn-primary full-width" onClick={() => setIsProviderDropdownOpen(false)}>Aplicar</a>
             </div>
         </div>
     );

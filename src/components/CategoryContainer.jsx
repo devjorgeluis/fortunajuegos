@@ -15,21 +15,22 @@ const CategoryContainer = (props) => {
   };
 
   return (
-    <div className="container">
-      <div className={`container categories-container ${props.isMobile ? 'mobile' : ''}`}>
-        <ul className={`navbar-nav flex-row casino-lobby-categories row ${props.isMobile ? 'mobile' : ''}` }>
-          {props.categories.map((category, index) => (
-            <CategoryButton
-              key={category.id ?? category.code ?? index}
-              name={category.name}
-              code={category.code}
-              active={props.selectedCategoryIndex === index}
-              onClick={() => handleCategoryClick(category, index)}
-            />
-          ))}
-        </ul>
+    <>
+      <div className="flex select-none items-center gap-2 overflow-x-hidden overscroll-contain scroll-smooth -mb-px gap-6 overflow-visible">
+        {props.categories.map((category, index) => (
+          <CategoryButton
+            key={category.id ?? category.code ?? index}
+            name={category.name}
+            code={category.code}
+            active={props.selectedCategoryIndex === index}
+            onClick={() => handleCategoryClick(category, index)}
+          />
+        ))}
       </div>
-    </div>
+      <div className="border-dark-grey-400 mb-6 flex items-center justify-between gap-4 border-b">
+        <div className="flex w-full gap-1"></div>
+      </div>
+    </>
   )
 }
 

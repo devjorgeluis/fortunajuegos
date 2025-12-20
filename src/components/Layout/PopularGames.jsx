@@ -1,6 +1,7 @@
 import { useContext, useState, useRef, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { AppContext } from '../../AppContext';
+import ImgLogoTransparent from "/src/assets/svg/logo-transparent.svg";
 
 const PopularGames = ({ games, title, icon, link, onGameClick }) => {
     const { contextData } = useContext(AppContext);
@@ -48,7 +49,7 @@ const PopularGames = ({ games, title, icon, link, onGameClick }) => {
         <div ref={containerRef} className="relative overflow-hidden sm:pb-5 py-6">
             <div className="relative mb-5 flex items-center justify-between gap-2 py-4">
                 <img
-                    src={icon}
+                    src={ImgLogoTransparent}
                     alt="fortunajuegos"
                     className="absolute left-0 h-auto w-[4.25rem] opacity-50 top-0.5"
                 />
@@ -56,7 +57,7 @@ const PopularGames = ({ games, title, icon, link, onGameClick }) => {
                     {title}
                 </h2>
                 <a
-                    className="aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full text-ellipsis ring-0 focus-visible:outline-0 font-bold rounded-lg text-base gap-3 px-4 py-3 text-theme-secondary-500 bg-theme-secondary-500/10 disabled:bg-theme-secondary-500/10 disabled:text-theme-secondary-500 disabled:opacity-30 focus-visible:ring-theme-secondary-500 focus-visible:ring-2 focus-visible:ring-inset focus:outline-theme-secondary-500/10 focus:bg-theme-secondary-500/20 focus:outline focus:outline-4 hover:bg-theme-secondary-500/20 inline-flex items-center justify-center min-h-12"
+                    className="cursor-pointer aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full text-ellipsis ring-0 focus-visible:outline-0 font-bold rounded-lg text-base gap-3 px-4 py-3 text-theme-secondary-500 bg-theme-secondary-500/10 disabled:bg-theme-secondary-500/10 disabled:text-theme-secondary-500 disabled:opacity-30 focus-visible:ring-theme-secondary-500 focus-visible:ring-2 focus-visible:ring-inset focus:outline-theme-secondary-500/10 focus:bg-theme-secondary-500/20 focus:outline focus:outline-4 hover:bg-theme-secondary-500/20 inline-flex items-center justify-center min-h-12"
                     onClick={() => navigate(link)}
                 >
                     Ver todo
@@ -77,7 +78,7 @@ const PopularGames = ({ games, title, icon, link, onGameClick }) => {
                                         style={{ '--image-aspect-ratio': '3/2' }}
                                     >
                                         <picture className="contents">
-                                            <source media="(min-width: 2400px)" srcSet="//static.everymatrix.com/cms2/base/_casino/1/1707D1A6CC65A33B3C4AFBCCF6B17822.jpg" />
+                                            <source media="(min-width: 2400px)" srcSet={game.image_local != null && game.image_local !== "" ? contextData.cdnUrl + game.image_local : game.image_url} />
                                             <img
                                                 className="h-full w-full rounded-lg object-cover transition-all duration-500 ease-out group-hover:opacity-50"
                                                 src={game.image_local != null && game.image_local !== "" ? contextData.cdnUrl + game.image_local : game.image_url}

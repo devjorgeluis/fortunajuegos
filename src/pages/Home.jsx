@@ -5,7 +5,7 @@ import { LayoutContext } from "../components/Layout/LayoutContext";
 import { NavigationContext } from "../components/Layout/NavigationContext";
 import { callApi } from "../utils/Utils";
 import DropWins from "../components/Home/DropWins";
-import PopularGames from "../components/Home/PopularGames";
+import PopularGames from "../components/Layout/PopularGames";
 import GameCategories from "../components/Home/GameCategories";
 import ProviderContainer from "../components/ProviderContainer";
 import Promotions from "../components/Home/Promotions";
@@ -14,7 +14,6 @@ import LoginModal from "../components/Modal/LoginModal";
 import Footer from "../components/Layout/Footer";
 import "animate.css";
 
-import ImgLogoTransparent from "/src/assets/svg/logo-transparent.svg";
 import ImgCategoryBackground1 from "/src/assets/img/category-background1.webp";
 import ImgCategoryBackground2 from "/src/assets/img/category-background2.webp";
 import ImgCategoryBackground3 from "/src/assets/img/category-background3.webp";
@@ -38,8 +37,6 @@ const Home = () => {
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
   const [tags, setTags] = useState([]);
   const [games, setGames] = useState([]);
-  const [topGames, setTopGames] = useState([]);
-  const [topLiveCasino, setTopLiveCasino] = useState([]);
   const [categories, setCategories] = useState([]);
   const [mainCategories, setMainCategories] = useState([]);
   const [selectedProvider, setSelectedProvider] = useState(null);
@@ -49,7 +46,7 @@ const Home = () => {
   const [shouldShowGameModal, setShouldShowGameModal] = useState(false);
   const [isGameLoadingError, setIsGameLoadingError] = useState(false);
   const refGameModal = useRef();
-  const { isSlotsOnly, isMobile } = useOutletContext();
+  const { isSlotsOnly, isMobile, topGames } = useOutletContext();
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -115,8 +112,6 @@ const Home = () => {
     if (result.status === 500 || result.status === 422) {
 
     } else {
-      setTopGames(result.top_hot);
-      setTopLiveCasino(result.top_livecasino);
       contextData.slots_only = result && result.slots_only;
     }
   };
@@ -317,7 +312,7 @@ const Home = () => {
                   <div className="gap-4 container md:grid md:grid-cols-1">
                     <div className="flex flex-col">
                       <DropWins />
-                      <PopularGames games={topGames} icon={ImgLogoTransparent} title="Juegos Populares" onGameClick={(game) => {
+                      <PopularGames games={topGames} title="Juegos Populares" onGameClick={(game) => {
                         if (isLogin) {
                           launchGame(game, "slot", "tab");
                         } else {
@@ -355,17 +350,6 @@ const Home = () => {
           </div>
         </>
       )}
-
-      {
-        isGameLoadingError && <div className="container">
-          <div className="row">
-            <div className="col-md-6 error-loading-game">
-              <div className="alert alert-warning">Error al cargar el juego. Inténtalo de nuevo o ponte en contacto con el equipo de soporte.</div>
-              <a className="btn btn-primary" onClick={() => window.location.reload()}>Volver a la página principal</a>
-            </div>
-          </div>
-        </div>
-      }
     </>
   );
 };
