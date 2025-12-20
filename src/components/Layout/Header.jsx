@@ -58,12 +58,12 @@ const Header = ({
                     {isLogin ? (
                         <>
                             <div className="inline-flex items-center rounded-lg bg-theme-secondary-500/10 px-4 py-3 text-theme-secondary-500 font-bold">
-                                <span className="text-sm sm:text-base">{Number.isFinite(Number(userBalance)) ? Number(userBalance).toFixed(2) : "0.00"}</span>
+                                <span className="text-sm sm:text-base">$ {Number.isFinite(Number(userBalance)) ? Number(userBalance).toFixed(2) : "0.00"}</span>
                             </div>
 
                             <a
-                                href="#"
-                                className="flex items-center gap-3 min-h-10 rounded-lg bg-theme-secondary-500/10 px-4 py-3 text-theme-secondary-500 font-bold hover:bg-theme-secondary-500/20"
+                                onClick={() => navigate("/profile")}
+                                className="cursor-pointer flex items-center gap-3 min-h-10 rounded-lg bg-theme-secondary-500/10 px-4 py-3 text-theme-secondary-500 font-bold hover:bg-theme-secondary-500/20"
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
