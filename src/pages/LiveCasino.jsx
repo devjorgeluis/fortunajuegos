@@ -475,6 +475,7 @@ const LiveCasino = () => {
           isOpen={showLoginModal}
           onClose={() => setShowLoginModal(false)}
           onConfirm={handleLoginConfirm}
+          isMobile={isMobile}
         />
       )}
       {shouldShowGameModal && selectedGameId !== null ? (

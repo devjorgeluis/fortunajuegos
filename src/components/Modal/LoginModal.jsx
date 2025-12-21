@@ -1,8 +1,10 @@
 import { useContext, useState, useEffect } from "react";
 import { AppContext } from "../../AppContext";
 import { callApi } from "../../utils/Utils";
+import ImgLogin from "/src/assets/img/login.webp"; 
+import ImgMobileLogin from "/src/assets/img/mobile-login.webp"; 
 
-const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
+const LoginModal = ({ isOpen, onClose, onLoginSuccess, isMobile }) => {
     const { contextData, updateSession } = useContext(AppContext);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -77,17 +79,9 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                     <div className="flex h-full overflow-hidden text-white flex-col lg:flex-row">
                         <div className="relative lg:h-full lg:basis-1/2">
                             <picture className="contents">
-                                <source media="(min-width: 2400px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/9396e425-2842-42de-b31f-b1f4b28f48ba.webp?sharpen=true&width=2400" className="hidden" />
-                                <source media="(min-width: 1920px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/9396e425-2842-42de-b31f-b1f4b28f48ba.webp?sharpen=true&width=1920" className="hidden" />
-                                <source media="(min-width: 1400px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/9396e425-2842-42de-b31f-b1f4b28f48ba.webp?sharpen=true&width=1400" className="hidden" />
-                                <source media="(min-width: 1280px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/9396e425-2842-42de-b31f-b1f4b28f48ba.webp?sharpen=true&width=1280" className="hidden" />
-                                <source media="(min-width: 960px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/9396e425-2842-42de-b31f-b1f4b28f48ba.webp?sharpen=true&width=960" className="hidden" />
-                                <source media="(min-width: 640px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/9396e425-2842-42de-b31f-b1f4b28f48ba.webp?sharpen=true&width=768" className="hidden" />
-                                <source media="(min-width: 480px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/9396e425-2842-42de-b31f-b1f4b28f48ba.webp?sharpen=true&width=576" className="hidden" />
-                                <source media="(min-width: 360px)" srcSet="https://engagefactory.b-cdn.net/entart/fortunajuegos/9396e425-2842-42de-b31f-b1f4b28f48ba.webp?sharpen=true&width=432" className="hidden" />
                                 <img
                                     className="h-full w-full object-cover lg:absolute lg:rounded-bl-3xl lg:rounded-tl-3xl"
-                                    src="https://engagefactory.b-cdn.net/entart/fortunajuegos/9396e425-2842-42de-b31f-b1f4b28f48ba.webp?sharpen=true"
+                                    src={isMobile ? ImgMobileLogin : ImgLogin}
                                     alt="Login background"
                                     loading="lazy"
                                 />
@@ -97,9 +91,6 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                         <div className="login-modal-form flex flex-col overflow-hidden lg:basis-1/2 h-full md:mt-4 lg:overflow-auto lg:pt-8">
                             <div className="relative flex h-full flex-col space-y-0 overflow-hidden">
                                 <div role="tablist" aria-orientation="horizontal" className="gap-4 sticky top-0 z-10 grid bg-transparent px-4 sm:px-10 rounded-lg inline-grid items-center" style={{ gridTemplateColumns: 'repeat(1, minmax(0px, 1fr))' }}>
-                                    <div className="inset-0 absolute bottom-0 left-0 top-auto z-10 flex items-end duration-200 ease-out focus:outline-none" style={{ top: '0px', left: '40px', width: '492px', height: '48px' }}>
-                                        <div className="w-full h-0.5 bg-theme-secondary"></div>
-                                    </div>
                                     <button
                                         className="flex-shrink-0 ui-focus-visible:outline-0 ui-focus-visible:ring-2 ui-focus-visible:ring-primary-500 dark:ui-focus-visible:ring-primary-400 ui-not-focus-visible:outline-none relative w-full flex-shrink-0 !leading-tight transition-colors duration-200 ease-out after:absolute after:bottom-0 after:w-full focus:outline-none disabled:cursor-not-allowed disabled:opacity-75 flex-shrink-1 border-dark-grey-500 flex cursor-pointer items-center justify-center border-b-2 h-12 text-sm w-auto dark:text-white after:bg-theme-secondary after:h-0.5 text-theme-secondary-500"
                                         role="tab"

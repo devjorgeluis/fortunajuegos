@@ -220,6 +220,7 @@ const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handl
     return (
         <>
             <aside
+                id="aside"
                 className={`bg-primary-900 text-primary-50 border-theme-secondary/10 z-50 flex h-full flex-col justify-between gap-4 border-r text-base [grid-area:_nav] sticky top-[var(--header-height)] max-h-[calc(100svh-var(--header-height))] min-h-[unset] lg:max-w-[15rem] transition-all duration-300 ${isSidebarExpanded ? "w-[16rem]" : "w-[4.25rem]"
                     }`}
             >

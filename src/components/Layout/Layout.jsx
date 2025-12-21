@@ -191,45 +191,47 @@ const Layout = () => {
             <NavigationContext.Provider
                 value={{ selectedPage, setSelectedPage, getPage, showFullDivLoading, setShowFullDivLoading }}
             >
-                <div className="grid min-h-[calc(_100dvh_-_var(--pwa-prompt-height,0px))] grid-rows-[auto_1fr_auto] pb-[var(--header-bottom-height)] grid-cols-[15rem_calc(100%_-_15rem)] [grid-template-areas:_'header_header'_'nav_main'_'nav_footer']">
-                    {/* <FullDivLoading show={showFullDivLoading} /> */}
-                    {showLoginModal && (
-                        <LoginModal
-                            isMobile={isMobile}
-                            isOpen={showLoginModal}
-                            onClose={() => setShowLoginModal(false)}
-                            onLoginSuccess={handleLoginSuccess}
-                        />
-                    )}
-                    <Header
-                        isLogin={isLogin}
-                        isMobile={isMobile}
-                        userBalance={userBalance}
-                        handleLoginClick={handleLoginClick}
-                        handleLogoutClick={handleLogoutClick}
-                        supportParent={supportParent}
-                        openSupportModal={openSupportModal}
-                    />
-                    <Sidebar isSlotsOnly={isSlotsOnly} isMobile={isMobile} supportParent={supportParent} openSupportModal={openSupportModal} handleLogoutClick={handleLogoutClick} />
-                    <div className={isLogin ? "account-background" : ""}>
-                        <Outlet context={{ isSlotsOnly, isMobile, topGames, topArcade, topCasino, topLiveCasino }} />
-                    </div>
-                    {showMobileSearch && isMobile && (
-                        <MobileSearch
+                <div className="w-full !overflow-x-clip h-dvh">
+                    <div className={`grid min-h-[calc(_100dvh_-_var(--pwa-prompt-height,0px))] grid-rows-[auto_1fr_auto] pb-[var(--header-bottom-height)] [grid-template-areas:_'header_header'_'nav_main'_'nav_footer'] ${isMobile ? "" : "grid-cols-[15rem_calc(100%_-_15rem)]"}`}>
+                        {/* <FullDivLoading show={showFullDivLoading} /> */}
+                        {showLoginModal && (
+                            <LoginModal
+                                isMobile={isMobile}
+                                isOpen={showLoginModal}
+                                onClose={() => setShowLoginModal(false)}
+                                onLoginSuccess={handleLoginSuccess}
+                            />
+                        )}
+                        <Header
                             isLogin={isLogin}
                             isMobile={isMobile}
-                            onClose={() => setShowMobileSearch(false)}
+                            userBalance={userBalance}
+                            handleLoginClick={handleLoginClick}
+                            handleLogoutClick={handleLogoutClick}
+                            supportParent={supportParent}
+                            openSupportModal={openSupportModal}
                         />
-                    )}
-                    <SupportModal
-                        isOpen={showSupportModal}
-                        onClose={closeSupportModal}
-                        supportWhatsApp={supportWhatsApp}
-                        supportTelegram={supportTelegram}
-                        supportEmail={supportEmail}
-                        supportParentOnly={supportParentOnly}
-                        supportParent={supportParent}
-                    />
+                        {!isMobile && <Sidebar isSlotsOnly={isSlotsOnly} isMobile={isMobile} supportParent={supportParent} openSupportModal={openSupportModal} handleLogoutClick={handleLogoutClick} /> }
+                        <div className={isLogin ? "account-background" : ""}>
+                            <Outlet context={{ isSlotsOnly, isMobile, topGames, topArcade, topCasino, topLiveCasino }} />
+                        </div>
+                        {showMobileSearch && isMobile && (
+                            <MobileSearch
+                                isLogin={isLogin}
+                                isMobile={isMobile}
+                                onClose={() => setShowMobileSearch(false)}
+                            />
+                        )}
+                        <SupportModal
+                            isOpen={showSupportModal}
+                            onClose={closeSupportModal}
+                            supportWhatsApp={supportWhatsApp}
+                            supportTelegram={supportTelegram}
+                            supportEmail={supportEmail}
+                            supportParentOnly={supportParentOnly}
+                            supportParent={supportParent}
+                        />
+                    </div>
                 </div>
             </NavigationContext.Provider>
         </LayoutContext.Provider>

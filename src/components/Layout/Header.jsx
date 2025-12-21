@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { LayoutContext } from "./LayoutContext";
 import ImgLogo from "/src/assets/svg/logo-desktop.svg";
+import ImgMobileLogo from "/src/assets/svg/logo-mobile.svg";
 import ImgCloseMenu from "/src/assets/svg/close-menu.svg";
 import ImgOpenMenu from "/src/assets/svg/open-menu.svg";
 import ImgSearch from "/src/assets/svg/search.svg";
@@ -15,41 +16,49 @@ const Header = ({
     handleLoginClick,
     openSupportModal,
 }) => {
+    console.log(isMobile);
+    
     const { isSidebarExpanded, toggleSidebar } = useContext(LayoutContext);
     const navigate = useNavigate();
 
     return (
         <header className="bg-primary-900 sticky top-0 z-[11] [grid-area:_header] border-theme-secondary/10 border-b">
-            <div className="relative flex min-h-[3.5rem] flex-wrap items-center gap-2 px-4 py-3 lg:z-[100]">
+            <div className={`relative min-h-[3.5rem] flex-wrap items-center gap-2 px-4 py-3 lg:z-[100] flex`}>
                 <div className="flex items-center gap-4">
-                    <button
-                        type="button"
-                        onClick={toggleSidebar}
-                        className="aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full flex-shrink-0 text-ellipsis ring-0 focus-visible:outline-0 font-bold rounded-lg text-base gap-2.5 p-2.5 text-theme-secondary-500 bg-theme-secondary-500/10 disabled:bg-theme-secondary-500/10 disabled:text-theme-secondary-500 disabled:opacity-30 focus-visible:ring-theme-secondary-500 focus-visible:ring-2 focus-visible:ring-inset focus:outline-theme-secondary-500/10 focus:bg-theme-secondary-500/20 focus:outline focus:outline-4 hover:bg-theme-secondary-500/20 inline-flex items-center justify-center"
-                    >
-                        <img src={isSidebarExpanded ? ImgCloseMenu : ImgOpenMenu} alt="Menu toggle" style={{ width: 20 }} />
-                    </button>
+                    {
+                        !isMobile && 
+                        <button
+                            type="button"
+                            onClick={toggleSidebar}
+                            className="aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full flex-shrink-0 text-ellipsis ring-0 focus-visible:outline-0 font-bold rounded-lg text-base gap-2.5 p-2.5 text-theme-secondary-500 bg-theme-secondary-500/10 disabled:bg-theme-secondary-500/10 disabled:text-theme-secondary-500 disabled:opacity-30 focus-visible:ring-theme-secondary-500 focus-visible:ring-2 focus-visible:ring-inset focus:outline-theme-secondary-500/10 focus:bg-theme-secondary-500/20 focus:outline focus:outline-4 hover:bg-theme-secondary-500/20 inline-flex items-center justify-center"
+                        >
+                            <img src={isSidebarExpanded ? ImgCloseMenu : ImgOpenMenu} alt="Menu toggle" style={{ width: 20 }} />
+                        </button>
+                    }
 
                     <a onClick={() => navigate("/")} className="block lg:mr-8 cursor-pointer" title="Logo">
-                        <img src={ImgLogo} alt="Logo" />
+                        <img src={isMobile ? ImgMobileLogo : ImgLogo} alt="Logo" />
                     </a>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2 flex-1">
-                    <div className="relative w-full max-w-full flex-1">
-                        <input
-                            id="search"
-                            name="searchInput"
-                            type="text"
-                            placeholder="Buscar..."
-                            className="h-12 w-full rounded-lg border-0 bg-dark-grey-950/50 pl-12 pr-4 text-white/50 placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-theme-highlight-green/20"
-                            autoComplete="off"
-                            readOnly
-                        />
-                        <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                            <img src={ImgSearch} alt="Buscar" className="w-6 h-6 text-white/20" />
-                        </span>
-                    </div>
+                <div className="flex flex-wrap items-center gap-2 flex-1 justify-end">
+                    {
+                        !isMobile && 
+                        <div className="relative w-full max-w-full flex-1">
+                            <input
+                                id="search"
+                                name="searchInput"
+                                type="text"
+                                placeholder="Buscar..."
+                                className="h-12 w-full rounded-lg border-0 bg-dark-grey-950/50 pl-12 pr-4 text-white/50 placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-theme-highlight-green/20"
+                                autoComplete="off"
+                                readOnly
+                            />
+                            <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                <img src={ImgSearch} alt="Buscar" className="w-6 h-6 text-white/20" />
+                            </span>
+                        </div>
+                    }
 
                     <button className="button-support" onClick={() => { openSupportModal(false); }}>
                         <img src={ImgSupport} />
@@ -78,13 +87,24 @@ const Header = ({
                         </>
                     ) : (
                         <div className="flex items-center gap-2 ml-2">
-                            <button
-                                type="button"
-                                onClick={handleLoginClick}
-                                className="min-h-12 rounded-lg bg-transparent px-6 py-3 text-theme-secondary-500 font-bold ring-1 ring-theme-secondary-500 hover:bg-theme-secondary-500/10 focus-visible:ring-2 focus-visible:ring-theme-secondary-500"
-                            >
-                                Iniciar sesión
-                            </button>
+                            {
+                                isMobile ?
+                                <button
+                                    type="button"
+                                    onClick={handleLoginClick}
+                                    className="aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full flex-shrink-0 text-ellipsis focus-visible:outline-0 font-bold rounded-lg gap-3 px-4 py-3 text-theme-secondary-500 bg-transparent ring-1 ring-inset ring-current disabled:ring-theme-secondary-500 disabled:bg-transparent disabled:opacity-30 focus-visible:ring-theme-secondary-500 focus-visible:ring-2 focus:outline-theme-secondary-500/20 focus:bg-theme-secondary-500/10 focus:outline focus:outline-4 hover:bg-theme-secondary-500/10 inline-flex items-center justify-center text-xs !leading-tight sm:min-h-12 sm:text-lg lg:min-w-[9.5rem]"
+                                >
+                                    Iniciar sesión
+                                </button>
+                                : 
+                                <button
+                                    type="button"
+                                    onClick={handleLoginClick}
+                                    className="min-h-12 rounded-lg bg-transparent px-6 py-3 text-theme-secondary-500 font-bold ring-1 ring-theme-secondary-500 hover:bg-theme-secondary-500/10 focus-visible:ring-2 focus-visible:ring-theme-secondary-500"
+                                >
+                                    Iniciar sesión
+                                </button>
+                            }
                         </div>
                     )}
                 </div>

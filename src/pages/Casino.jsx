@@ -350,6 +350,7 @@ const Casino = () => {
           isOpen={showLoginModal}
           onClose={() => setShowLoginModal(false)}
           onConfirm={handleLoginConfirm}
+          isMobile={isMobile}
         />
       )}
       {shouldShowGameModal && selectedGameId !== null ? (
