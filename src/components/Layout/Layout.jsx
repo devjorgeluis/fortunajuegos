@@ -11,7 +11,7 @@ import SupportModal from "../Modal/SupportModal";
 import { NavigationContext } from "./NavigationContext";
 import FullDivLoading from "../Loading/FullDivLoading";
 import MobileSearch from "../MobileSearch";
-import MobileFooter from "./mobileFooter";
+import MobileFooter from "./MobileFooter";
 
 const Layout = () => {
     const { contextData } = useContext(AppContext);

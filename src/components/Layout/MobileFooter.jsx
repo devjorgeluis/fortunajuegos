@@ -13,7 +13,13 @@ import ImgProfile from "/src/assets/svg/profile.svg";
 import ImgLogout from "/src/assets/svg/logout.svg";
 import ImgPhone from "/src/assets/svg/phone.svg";
 
-const MobileFooter = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handleLogoutClick }) => {
+const MobileFooter = ({
+    isSlotsOnly,
+    isMobile,
+    supportParent,
+    openSupportModal,
+    handleLogoutClick,
+}) => {
     const navigate = useNavigate();
     const location = useLocation();
     const { isSidebarExpanded, toggleSidebar } = useContext(LayoutContext);
@@ -38,21 +44,29 @@ const MobileFooter = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, 
     // Fetch live casino categories
     useEffect(() => {
         if (!hasFetchedLiveCasino) {
-            callApi(contextData, "GET", "/get-page?page=livecasino", (result) => {
-                if (result.status === 500 || result.status === 422) return;
+            callApi(
+                contextData,
+                "GET",
+                "/get-page?page=livecasino",
+                (result) => {
+                    if (result.status === 500 || result.status === 422) return;
 
-                const menus = [{ name: "Inicio", code: "home", href: "/live-casino#home" }];
-                result.data.categories.forEach((element) => {
-                    menus.push({
-                        name: element.name,
-                        href: `/live-casino#${element.code}`,
-                        code: element.code,
+                    const menus = [
+                        { name: "Inicio", code: "home", href: "/live-casino#home" },
+                    ];
+                    result.data.categories.forEach((element) => {
+                        menus.push({
+                            name: element.name,
+                            href: `/live-casino#${element.code}`,
+                            code: element.code,
+                        });
                     });
-                });
 
-                setLiveCasinoMenus(menus);
-                setHasFetchedLiveCasino(true);
-            }, null);
+                    setLiveCasinoMenus(menus);
+                    setHasFetchedLiveCasino(true);
+                },
+                null
+            );
         }
     }, [hasFetchedLiveCasino, contextData]);
 
@@ -61,7 +75,11 @@ const MobileFooter = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, 
         const currentPath = location.pathname;
         const hash = location.hash.slice(1);
 
-        if (currentPath.startsWith("/live-casino") && hash && !isMenuExpanded("live-casino")) {
+        if (
+            currentPath.startsWith("/live-casino") &&
+            hash &&
+            !isMenuExpanded("live-casino")
+        ) {
             setExpandedMenus((prev) => [...prev, "live-casino"]);
         }
 
@@ -87,8 +105,10 @@ const MobileFooter = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, 
         const hash = location.hash;
 
         if (item.href === currentPath) return true;
-        if (item.href.includes("#")) return location.pathname + location.hash === item.href;
-        if (item.id === "profile" && currentPath.startsWith("/profile")) return true;
+        if (item.href.includes("#"))
+            return location.pathname + location.hash === item.href;
+        if (item.id === "profile" && currentPath.startsWith("/profile"))
+            return true;
         return false;
     };
 
@@ -112,52 +132,69 @@ const MobileFooter = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, 
                 { name: "Ruletas", href: "/casino#roulette" },
             ],
         },
-        ...(isSlotsOnly === "false" ? [] : [
-            {
-                id: "live-casino",
-                name: "Casino en Vivo",
-                image: ImgLiveCasino,
-                href: "/live-casino",
-                subItems: liveCasinoMenus,
-            },            
-            {
-                id: "sports",
-                name: "Deportes",
-                image: ImgSports,
-                href: "/sports",
-                subItems: [
-                    { name: "Inicio", href: "/sports" },
-                    { name: "En Vivo", href: "/live-sports" },
-                ],
-            }
-        ]),
-        ...(isLoggedIn ? [{
-            id: "profile",
-            name: "Cuenta",
-            image: ImgProfile,
-            href: "/profile/detail",
-            subItems: [
-                { name: "Ajustes de Cuenta", href: "/profile/detail" },
-                { name: "Historial de transacciones", href: "/profile/transaction" },
-                { name: "Historial de Casino", href: "/profile/history" },
-            ],
-        }] : []),
-        ...(supportParent ? [{
-            id: "support",
-            name: "Contactá a Tu Cajero",
-            image: ImgPhone,
-            href: "#",
-            subItems: [],
-            action: () => openSupportModal(true),
-        }] : []),
-        ...(isLoggedIn ? [{
-            id: "logout",
-            name: "Cerrar sesión",
-            image: ImgLogout,
-            href: "#",
-            subItems: [],
-            action: handleLogoutClick,
-        }] : []),
+        ...(isSlotsOnly === "false"
+            ? []
+            : [
+                {
+                    id: "live-casino",
+                    name: "Casino en Vivo",
+                    image: ImgLiveCasino,
+                    href: "/live-casino",
+                    subItems: liveCasinoMenus,
+                },
+                {
+                    id: "sports",
+                    name: "Deportes",
+                    image: ImgSports,
+                    href: "/sports",
+                    subItems: [
+                        { name: "Inicio", href: "/sports" },
+                        { name: "En Vivo", href: "/live-sports" },
+                    ],
+                },
+            ]),
+        ...(isLoggedIn
+            ? [
+                {
+                    id: "profile",
+                    name: "Cuenta",
+                    image: ImgProfile,
+                    href: "/profile/detail",
+                    subItems: [
+                        { name: "Ajustes de Cuenta", href: "/profile/detail" },
+                        {
+                            name: "Historial de transacciones",
+                            href: "/profile/transaction",
+                        },
+                        { name: "Historial de Casino", href: "/profile/history" },
+                    ],
+                },
+            ]
+            : []),
+        ...(supportParent
+            ? [
+                {
+                    id: "support",
+                    name: "Contactá a Tu Cajero",
+                    image: ImgPhone,
+                    href: "#",
+                    subItems: [],
+                    action: () => openSupportModal(true),
+                },
+            ]
+            : []),
+        ...(isLoggedIn
+            ? [
+                {
+                    id: "logout",
+                    name: "Cerrar sesión",
+                    image: ImgLogout,
+                    href: "#",
+                    subItems: [],
+                    action: handleLogoutClick,
+                },
+            ]
+            : []),
     ];
 
     return (
@@ -186,7 +223,11 @@ const MobileFooter = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, 
                                 className="group relative flex flex-1 flex-col items-center gap-1 px-2 py-1 text-primary-50"
                             >
                                 <div className="p-1">
-                                    <img src={ImgMobileSports} alt="Deportes" className="h-5 w-5" />
+                                    <img
+                                        src={ImgMobileSports}
+                                        alt="Deportes"
+                                        className="h-5 w-5"
+                                    />
                                 </div>
                                 <span className="truncate text-center text-[0.625rem] font-bold leading-normal opacity-50 group-hover:opacity-100 group-focus:opacity-100">
                                     Deportes
@@ -197,7 +238,11 @@ const MobileFooter = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, 
                                 className="group relative flex flex-1 flex-col items-center gap-1 px-2 py-1 text-primary-50"
                             >
                                 <div className="p-1">
-                                    <img src={ImgMobileLiveCasino} alt="Casino en vivo" className="h-5 w-5" />
+                                    <img
+                                        src={ImgMobileLiveCasino}
+                                        alt="Casino en vivo"
+                                        className="h-5 w-5"
+                                    />
                                 </div>
                                 <span className="truncate text-center text-[0.625rem] font-bold leading-normal opacity-50 group-hover:opacity-100 group-focus:opacity-100">
                                     Casino en vivo
@@ -206,11 +251,16 @@ const MobileFooter = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, 
                         </>
                     )}
 
-
                     {/* Search (placeholder) */}
                     <button className="group relative flex flex-1 flex-col items-center gap-1 px-2 py-1 text-primary-50">
                         <div className="p-1">
-                            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <svg
+                                className="h-5 w-5"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                            >
                                 <circle cx="11" cy="11" r="8" />
                                 <path d="m21 21-4.35-4.35" />
                             </svg>
@@ -229,7 +279,13 @@ const MobileFooter = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, 
                         className="group relative flex flex-1 flex-col items-center gap-1 px-2 py-1 text-primary-50"
                     >
                         <div className="p-1">
-                            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <svg
+                                className="h-5 w-5"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                            >
                                 <path d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </div>
@@ -261,13 +317,19 @@ const MobileFooter = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, 
                                             <div className="flex w-full flex-col rounded-2xl">
                                                 <div
                                                     className="flex items-center justify-between gap-2 pr-4"
-                                                    {...(item.subItems.length > 0 ? { onClick: () => toggleMenu(item.id) } : {})}
+                                                    {...(item.subItems.length > 0
+                                                        ? { onClick: () => toggleMenu(item.id) }
+                                                        : {})}
                                                 >
                                                     <button
                                                         onClick={handleNavigation(item)}
                                                         className="flex flex-1 items-center gap-4 py-4 pl-4 text-sm font-bold"
                                                     >
-                                                        <img src={item.image} alt={item.name} className="h-5 w-5" />
+                                                        <img
+                                                            src={item.image}
+                                                            alt={item.name}
+                                                            className="h-5 w-5"
+                                                        />
                                                         <span className="uppercase text-theme-secondary-50">
                                                             {item.name}
                                                         </span>
@@ -275,7 +337,8 @@ const MobileFooter = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, 
 
                                                     {item.subItems.length > 0 && (
                                                         <svg
-                                                            className={`h-6 w-6 rounded p-1 text-theme-secondary transition-transform duration-200 bg-theme-secondary-300/10 ${isMenuExpanded(item.id) ? "rotate-180" : ""}`}
+                                                            className={`h-6 w-6 rounded p-1 text-theme-secondary transition-transform duration-200 bg-theme-secondary-300/10 ${isMenuExpanded(item.id) ? "rotate-180" : ""
+                                                                }`}
                                                             viewBox="0 0 24 24"
                                                             fill="none"
                                                             stroke="currentColor"
@@ -286,29 +349,32 @@ const MobileFooter = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, 
                                                     )}
                                                 </div>
 
-                                                {item.subItems.length > 0 && isMenuExpanded(item.id) && (
-                                                    <div className="pb-2">
-                                                        <div className="flex flex-col gap-1 px-2">
-                                                            {item.subItems.map((sub) => (
-                                                                <button
-                                                                    key={sub.href}
-                                                                    onClick={handleNavigation({ href: sub.href })}
-                                                                    className={`flex w-full items-center gap-2 rounded-xl px-4 py-3 text-left text-base font-normal text-white hover:bg-theme-secondary/5 lg:text-sm ${isActiveSubmenu(sub.href)
-                                                                            ? "bg-theme-secondary/10 text-theme-secondary"
-                                                                            : ""
-                                                                        }`}
-                                                                >
-                                                                    <span>{sub.name}</span>
-                                                                    {sub.name === "Hot" && (
-                                                                        <span className="rounded-full bg-theme-secondary px-1.5 py-0.5 text-[0.625rem] font-semibold text-dark-grey-900">
-                                                                            POPULARES
-                                                                        </span>
-                                                                    )}
-                                                                </button>
-                                                            ))}
+                                                {item.subItems.length > 0 &&
+                                                    isMenuExpanded(item.id) && (
+                                                        <div className="pb-2">
+                                                            <div className="flex flex-col gap-1 px-2">
+                                                                {item.subItems.map((sub) => (
+                                                                    <button
+                                                                        key={sub.href}
+                                                                        onClick={handleNavigation({
+                                                                            href: sub.href,
+                                                                        })}
+                                                                        className={`flex w-full items-center gap-2 rounded-xl px-4 py-3 text-left text-base font-normal text-white hover:bg-theme-secondary/5 lg:text-sm ${isActiveSubmenu(sub.href)
+                                                                                ? "bg-theme-secondary/10 text-theme-secondary"
+                                                                                : ""
+                                                                            }`}
+                                                                    >
+                                                                        <span>{sub.name}</span>
+                                                                        {sub.name === "Hot" && (
+                                                                            <span className="rounded-full bg-theme-secondary px-1.5 py-0.5 text-[0.625rem] font-semibold text-dark-grey-900">
+                                                                                POPULARES
+                                                                            </span>
+                                                                        )}
+                                                                    </button>
+                                                                ))}
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                )}
+                                                    )}
                                             </div>
                                         </div>
                                     </div>
