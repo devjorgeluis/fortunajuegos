@@ -7,8 +7,9 @@ import ImgCasino from "/src/assets/svg/casino.svg";
 import ImgLiveCasino from "/src/assets/svg/live-casino.svg";
 import ImgSports from "/src/assets/svg/sports.svg";
 import ImgProfile from "/src/assets/svg/profile.svg";
+import ImgLogout from "/src/assets/svg/logout.svg";
 
-const Sidebar = ({ isSlotsOnly, isMobile }) => {
+const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handleLogoutClick }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const { isSidebarExpanded, toggleSidebar } = useContext(LayoutContext);
@@ -38,6 +39,7 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
 
     const isMenuExpanded = (menuId) => expandedMenus.includes(menuId);
 
+    // Fetch live casino categories
     useEffect(() => {
         if (!hasFetchedLiveCasino && isLoggedIn) {
             callApi(contextData, "GET", "/get-page?page=livecasino", (result) => {
@@ -62,16 +64,12 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
         const currentPath = location.pathname;
         const hash = location.hash.slice(1);
 
-        if (currentPath.startsWith("/live-casino") && hash) {
-            if (!isMenuExpanded("live-casino")) {
-                setExpandedMenus((prev) => [...prev, "live-casino"]);
-            }
+        if (currentPath.startsWith("/live-casino") && hash && !isMenuExpanded("live-casino")) {
+            setExpandedMenus((prev) => [...prev, "live-casino"]);
         }
 
-        if (currentPath.startsWith("/profile")) {
-            if (!isMenuExpanded("profile")) {
-                setExpandedMenus((prev) => [...prev, "profile"]);
-            }
+        if (currentPath.startsWith("/profile") && !isMenuExpanded("profile")) {
+            setExpandedMenus((prev) => [...prev, "profile"]);
         }
     }, [location.pathname, location.hash]);
 
@@ -162,6 +160,13 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
                         { name: "Historial de Casino", href: "/profile/history" },
                     ],
                 },
+                {
+                    id: "logout",
+                    name: "Cerrar sesión",
+                    image: ImgLogout,
+                    href: "#",
+                    subItems: []
+                },
             ]
             : []),
     ];
@@ -171,10 +176,28 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
         navigate(href);
     };
 
+    // Check if current route matches menu item (for active background)
+    const isMenuActive = (item) => {
+        const currentPath = location.pathname;
+        const hash = location.hash;
+
+        // Exact path match
+        if (item.href === currentPath) return true;
+
+        // For hash routes
+        if (item.href.includes("#")) {
+            return location.pathname + location.hash === item.href;
+        }
+
+        // For nested paths (like /profile/*)
+        if (item.id === "profile" && currentPath.startsWith("/profile")) return true;
+
+        return false;
+    };
+
     const isActiveSubmenu = (href) => {
         if (href.includes("#")) {
-            const hash = location.hash.slice(1);
-            return href.endsWith(`#${hash}`);
+            return location.pathname + location.hash === href;
         }
         return location.pathname === href;
     };
@@ -190,6 +213,7 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
                         <nav className="flex flex-col gap-2">
                             {menuItems.map((item) => {
                                 const itemRef = (el) => (iconRefs.current[item.id] = el);
+                                const isActive = isMenuActive(item);
 
                                 if (!isSidebarExpanded) {
                                     return (
@@ -200,19 +224,29 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
                                             onMouseEnter={(e) => handleMouseEnter(item.id, e)}
                                             onMouseLeave={handleMouseLeave}
                                         >
-                                            <button
-                                                onClick={handleNavigation(item.href)}
-                                                className={`text-theme-secondary ring-theme-secondary/10 flex aspect-square w-full items-center justify-center gap-2.5 rounded-2xl p-4 ring-1 transition duration-75 hover:ring-theme-secondary hover:cursor-pointer ${item.id === "casino" || item.id === "live-casino"
-                                                        ? "bg-theme-secondary/20"
-                                                        : "bg-transparent"
-                                                    }`}
-                                            >
-                                                <img src={item.image} alt={item.name} className="h-5 w-5" />
-                                            </button>
+                                            {
+                                                item.id === "logout" ? 
+                                                <button 
+                                                    onClick={() => handleLogoutClick()}
+                                                    type="button" 
+                                                    className="aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full flex-shrink-0 text-ellipsis focus-visible:outline-0 rounded-lg text-sm gap-2 py-1.5 bg-transparent ring-1 ring-inset disabled:ring-theme-secondary-500 disabled:bg-transparent disabled:opacity-30 focus-visible:ring-theme-secondary-500 focus-visible:ring-2 focus:outline-theme-secondary-500/20 focus:bg-theme-secondary-500/10 focus:outline focus:outline-4 hover:bg-theme-secondary-500/10 inline-flex items-center justify-center ring-theme-secondary-100/50 text-theme-secondary-100/50 !py-3 px-4 font-normal"
+                                                >
+                                                    <img src={ImgLogout} />
+                                                </button>
+                                                :
+                                                <button
+                                                    onClick={handleNavigation(item.href)}
+                                                    className={`text-theme-secondary ring-theme-secondary/10 flex aspect-square w-full items-center justify-center gap-2.5 rounded-2xl p-4 ring-1 transition duration-75 hover:ring-theme-secondary hover:cursor-pointer ${isActive ? "bg-theme-secondary/20" : "bg-transparent"
+                                                        }`}
+                                                >
+                                                    <img src={item.image} alt={item.name} className="h-5 w-5" />
+                                                </button>
+                                            }
                                         </div>
                                     );
                                 }
 
+                                // Expanded mode
                                 return (
                                     <div key={item.id} className="relative">
                                         <div className="[&>[data-state='open']]:bg-theme-secondary/10 [&>[data-state='open']]:ring-1 flex flex-col gap-2 border-theme-secondary/10 w-full rounded-2xl border p-0 hover:border-theme-secondary/20 hover:bg-theme-secondary/[0.02] [&>[data-state='open']]:ring-theme-secondary/20">
@@ -225,7 +259,7 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
                                                     onClick={() => toggleMenu(item.id)}
                                                 >
                                                     <button
-                                                        onClick={handleNavigation(item.href)}
+                                                        onClick={item.id !== "logout" ? handleNavigation(item.href) : handleLogoutClick}
                                                         className="aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 max-w-full text-ellipsis ring-0 focus:outline-none focus-visible:outline-0 rounded-lg gap-4 inline-flex items-center justify-center flex-1 py-4 pl-4 text-sm font-bold !leading-tight transition-all lg:text-xs"
                                                     >
                                                         <span className="flex w-full items-center gap-2 text-left">
@@ -236,23 +270,23 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
                                                         </span>
                                                     </button>
 
-                                                    <svg
-                                                        className={`h-6 w-6 rounded p-1 text-theme-secondary transition-transform duration-200 bg-theme-secondary-300/10 ${isMenuExpanded(item.id) ? "rotate-180" : ""
-                                                            }`}
-                                                        viewBox="0 0 24 24"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        strokeWidth="2"
-                                                    >
-                                                        <path d="m6 9 6 6 6-6" />
-                                                    </svg>
+                                                    {
+                                                        item.id !== "logout" && <svg
+                                                            className={`h-6 w-6 rounded p-1 text-theme-secondary transition-transform duration-200 bg-theme-secondary-300/10 ${isMenuExpanded(item.id) ? "rotate-180" : ""
+                                                                }`}
+                                                            viewBox="0 0 24 24"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            strokeWidth="2"
+                                                        >
+                                                            <path d="m6 9 6 6 6-6" />
+                                                        </svg>
+                                                    }
                                                 </div>
 
                                                 <div
                                                     className="overflow-hidden"
-                                                    style={{
-                                                        display: isMenuExpanded(item.id) ? "block" : "none",
-                                                    }}
+                                                    style={{ display: isMenuExpanded(item.id) ? "block" : "none" }}
                                                 >
                                                     <div className="rounded-b-2xl bg-transparent p-0">
                                                         <div className="flex flex-col gap-1 px-2 pb-2 pt-1">
@@ -261,8 +295,8 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
                                                                     key={sub.href}
                                                                     onClick={handleNavigation(sub.href)}
                                                                     className={`flex w-full items-center gap-2 rounded-xl px-4 py-3 text-left text-base font-normal !leading-tight text-white hover:bg-theme-secondary/5 hover:text-white lg:text-sm ${isActiveSubmenu(sub.href)
-                                                                            ? "bg-theme-secondary/10 text-theme-secondary"
-                                                                            : ""
+                                                                        ? "bg-theme-secondary/10 text-theme-secondary"
+                                                                        : ""
                                                                         }`}
                                                                 >
                                                                     <span>{sub.name}</span>
@@ -286,6 +320,7 @@ const Sidebar = ({ isSlotsOnly, isMobile }) => {
                 </div>
             </aside>
 
+            {/* Popover for collapsed mode */}
             {isPopoverVisible && hoveredMenu && !isSidebarExpanded && (
                 <div
                     ref={popoverRef}
