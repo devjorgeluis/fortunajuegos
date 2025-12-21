@@ -211,7 +211,9 @@ const Layout = () => {
                         openSupportModal={openSupportModal}
                     />
                     <Sidebar isSlotsOnly={isSlotsOnly} isMobile={isMobile} supportParent={supportParent} openSupportModal={openSupportModal} />
-                    <Outlet context={{ isSlotsOnly, isMobile, topGames, topArcade, topCasino, topLiveCasino }} />
+                    <div className={isLogin && "account-background"}>
+                        <Outlet context={{ isSlotsOnly, isMobile, topGames, topArcade, topCasino, topLiveCasino }} />
+                    </div>
                     {showMobileSearch && isMobile && (
                         <MobileSearch
                             isLogin={isLogin}

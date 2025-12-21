@@ -322,9 +322,9 @@ const ProfileDetail = () => {
                         </div>
                     </div>
                 </form>
-            </div>
 
-            <Footer />
+                <Footer />
+            </div>
         </>
     );
 };
