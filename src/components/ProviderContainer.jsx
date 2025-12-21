@@ -47,7 +47,7 @@ const ProviderContainer = ({
                     />
                 }
 
-                <h1 className={`${!isMobile ? "mx-auto" : ""} text-center text-xs font-bold uppercase tracking-wider text-dark-grey-50 sm:text-sm`}>
+                <h1 className={`text-center text-xs font-bold uppercase tracking-wider text-dark-grey-50 sm:text-sm`}>
                     Proveedores
                 </h1>
 
