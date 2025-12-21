@@ -43,14 +43,6 @@ const GameCategories = (props) => {
                         >
                             <div className="relative flex items-end justify-end overflow-hidden rounded-3xl pb-2.5 pl-6 pr-2.5 pt-[3.25rem]">
                                 <picture className="contents">
-                                    <source
-                                        media="(min-width: 2400px)"
-                                        srcSet={category.backgroundImage}
-                                    />
-                                    <source
-                                        media="(min-width: 1920px)"
-                                        srcSet={category.backgroundImage}
-                                    />
                                     <img
                                         className="absolute inset-0 h-full w-full object-cover"
                                         src={category.backgroundImage}
@@ -61,10 +53,6 @@ const GameCategories = (props) => {
                                 </picture>
 
                                 <picture className="contents">
-                                    <source
-                                        media="(min-width: 2400px)"
-                                        srcSet={category.image}
-                                    />
                                     <img
                                         className="!aspect-[1/1] w-full max-w-[60%] rounded-lg object-cover drop-shadow-lg transition-all group-hover:scale-125 group-hover:rounded-xl group-hover:opacity-100 group-hover:drop-shadow-none lg:opacity-60"
                                         src={category.image}
@@ -79,7 +67,7 @@ const GameCategories = (props) => {
                                 </span>
                             </div>
 
-                            <h3 className="absolute left-6 top-6 z-[1] px-2 text-4xl font-bold !leading-none tracking-tight text-white">
+                            <h3 className="absolute left-6 top-6 z-[1] px-2 font-bold !leading-none tracking-tight text-white text-2xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl">
                                 {category.name}
                             </h3>
                         </a>

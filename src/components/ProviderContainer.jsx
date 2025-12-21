@@ -1,23 +1,24 @@
 import { useContext } from "react";
+import { useLocation, useOutletContext } from "react-router-dom";
 import { AppContext } from "../AppContext";
-import { useLocation } from "react-router-dom";
 
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/navigation';
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
 
 import ImgLogoTransparent from "/src/assets/svg/logo-transparent.svg";
 
 const ProviderContainer = ({
     categories,
     selectedProvider,
-    onProviderSelect
+    onProviderSelect,
 }) => {
     const { contextData } = useContext(AppContext);
+    const { isMobile } = useOutletContext();
     const location = useLocation();
 
-    const providers = categories.filter(cat => cat.code && cat.code !== "home");
+    const providers = categories.filter((cat) => cat.code && cat.code !== "home");
 
     const handleClick = (e, provider) => {
         e.preventDefault();
@@ -26,44 +27,58 @@ const ProviderContainer = ({
 
     const isSelected = (provider) => {
         const hashCode = location.hash.substring(1);
-        return (selectedProvider && selectedProvider.id === provider.id) ||
-            (hashCode === provider.code);
+        return (
+            (selectedProvider && selectedProvider.id === provider.id) ||
+            hashCode === provider.code
+        );
     };
 
     return (
-        <div className="relative mb-3 py-2 lg:py-3">
-            <div className="absolute inset-0 h-[calc(100%_-_2rem)] w-full opacity-50 [mask-composite:intersect] [mask-image:linear-gradient(to_right,transparent,white_40%,white_60%,transparent),linear-gradient(to_bottom,transparent,white_40%,white_60%,transparent)] lg:h-[calc(100%_-_5rem)]" />
-            <div className="relative mb-3 flex items-center justify-between gap-2 py-4">
-                <img
-                    src={ImgLogoTransparent}
-                    alt="fortunajuegos"
-                    className="absolute left-0 top-0.5 h-auto w-[4.25rem] opacity-50"
-                />
+        <div className="relative mb-6 py-4 lg:py-6">
+            <div className="pointer-events-none absolute inset-0 z-10 h-full w-full [mask-image:linear-gradient(to_right,transparent_0%,black_15%,black_85%,transparent_100%)]" />
 
-                <h1 className="text-dark-grey-50 text-xs font-bold !leading-tight tracking-[1.2px] sm:text-sm sm:leading-[1.1]">
+            <div className="relative mb-4 flex items-center justify-between px-4 py-4">
+                {
+                    !isMobile && 
+                    <img
+                        src={ImgLogoTransparent}
+                        alt="fortunajuegos"
+                        className="absolute left-4 top-4 h-auto w-16 opacity-50 lg:left-0 lg:top-0.5"
+                    />
+                }
+
+                <h1 className={`${!isMobile ? "mx-auto" : ""} text-center text-xs font-bold uppercase tracking-wider text-dark-grey-50 sm:text-sm`}>
                     Proveedores
                 </h1>
 
                 <a
                     href="#"
-                    className="aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full text-ellipsis ring-0 focus-visible:outline-0 font-bold rounded-lg text-base gap-3 px-4 py-3 text-theme-secondary-500 bg-theme-secondary-500/10 disabled:bg-theme-secondary-500/10 disabled:text-theme-secondary-500 disabled:opacity-30 focus-visible:ring-theme-secondary-500 focus-visible:ring-2 focus-visible:ring-inset focus:outline-theme-secondary-500/10 focus:bg-theme-secondary-500/20 focus:outline focus:outline-4 hover:bg-theme-secondary-500/20 inline-flex items-center justify-center min-h-10"
+                    className="rounded-lg bg-theme-secondary-500/10 px-4 py-3 font-bold text-theme-secondary-500 transition hover:bg-theme-secondary-500/20"
                 >
                     Ver todo
                 </a>
             </div>
-            <div className="relative w-full pb-6">
+
+            <div className="relative px-4 lg:px-0">
                 <Swiper
                     modules={[Navigation]}
                     spaceBetween={16}
-                    slidesPerView={8}
-                    loop={true}
-                    navigation={{
-                        prevEl: '.swiper-button-prev',
-                        nextEl: '.swiper-button-next',
-                    }}
+                    slidesPerView="auto"
+                    centeredSlides={false}
                     grabCursor={true}
-                    className="scroll-snap-slider transform-gpu"
-                    style={{ pointerEvents: 'auto' }}
+                    loop={providers.length > 6}
+                    navigation={{
+                        prevEl: ".custom-swiper-button-prev",
+                        nextEl: ".custom-swiper-button-next",
+                    }}
+                    breakpoints={{
+                        320: { slidesPerView: 2, spaceBetween: 12 },
+                        640: { slidesPerView: 4, spaceBetween: 16 },
+                        768: { slidesPerView: 5, spaceBetween: 20 },
+                        1024: { slidesPerView: 6, spaceBetween: 24 },
+                        1280: { slidesPerView: 8, spaceBetween: 24 },
+                    }}
+                    className="!overflow-visible"
                 >
                     {providers.map((provider) => {
                         const selected = isSelected(provider);
@@ -72,50 +87,51 @@ const ProviderContainer = ({
                             : provider.image_url;
 
                         return (
-                            <SwiperSlide
-                                key={provider.id}
-                                className="!w-32 !h-auto lg:!min-w-32 lg:shrink-0"
-                            >
-                                <div
-                                    className={`
-                                        bg-theme-secondary/10 ease-elastic-out relative flex h-auto min-h-16 w-full
-                                        flex-col items-center justify-between gap-1 rounded-xl border border-transparent
-                                        p-2 transition-colors duration-300 hover:bg-theme-secondary/20
-                                        hover:border-theme-secondary/20 ${selected ? 'ring-2 ring-theme-secondary' : ''}
-                                    `}
+                            <SwiperSlide key={provider.id} className="!w-28 !h-auto sm:!w-32">
+                                <button
                                     onClick={(e) => handleClick(e, provider)}
+                                    className={`bg-theme-secondary/10 
+                                        relative flex h-full w-full flex-col items-center justify-between 
+                                        gap-3 rounded-xl border p-4 transition-all duration-300
+                                        ${selected
+                                            ? "border-theme-secondary ring-2 ring-theme-secondary bg-theme-secondary/10"
+                                            : "border-transparent bg-dark-grey-900/50 hover:bg-theme-secondary/10 hover:border-theme-secondary/20"
+                                        }
+                                    `}
+                                    aria-label={`Ver juegos de ${provider.name}`}
                                 >
-                                    <div className="flex aspect-[2/1] max-h-12 w-full max-w-24 items-center justify-center">
+                                    <div className="flex aspect-[3/2] w-full max-w-24 items-center justify-center">
                                         {imageUrl ? (
-                                            <picture className="contents">
-                                                <img
-                                                    src={imageUrl}
-                                                    alt={provider.name}
-                                                    className="object-contain"
-                                                    loading="lazy"
-                                                />
-                                            </picture>
-                                        ) : null}
+                                            <img
+                                                src={imageUrl}
+                                                alt={provider.name}
+                                                className="max-h-12 max-w-full object-contain"
+                                                loading="lazy"
+                                            />
+                                        ) : (
+                                            <div className="h-12 w-24 rounded bg-dark-grey-800" />
+                                        )}
                                     </div>
 
-                                    <span className="
-                                        inline-flex items-center font-normal rounded-md px-2 py-1 text-xs
-                                        !leading-tight gap-0.5 ring-inset bg-dark-grey-900 text-white ring-1
-                                        ring-dark-grey-700 self-start
-                                    ">
-                                        <span>{provider.element_count} Juegos</span>
+                                    <span className="rounded-md bg-dark-grey-800 px-2 py-1 text-xs font-medium text-white ring-1 ring-dark-grey-700">
+                                        {provider.element_count} Juegos
                                     </span>
-
-                                    <a
-                                        href={`/casino/#${provider.name}`}
-                                        className="absolute inset-0"
-                                        title={provider.name}
-                                        aria-label={`Ver juegos de ${provider.name}`}
-                                    />
-                                </div>
+                                </button>
                             </SwiperSlide>
                         );
                     })}
+
+                    <div className="custom-swiper-button-prev absolute left-0 top-1/2 -translate-y-1/2 z-20 hidden rounded-full bg-black/30 p-2 text-white backdrop-blur-sm transition hover:bg-black/50 lg:flex">
+                        <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M15 18l-6-6 6-6" />
+                        </svg>
+                    </div>
+
+                    <div className="custom-swiper-button-next absolute right-0 top-1/2 -translate-y-1/2 z-20 hidden rounded-full bg-black/30 p-2 text-white backdrop-blur-sm transition hover:bg-black/50 lg:flex">
+                        <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M9 18l6-6-6-6" />
+                        </svg>
+                    </div>
                 </Swiper>
             </div>
         </div>

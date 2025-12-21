@@ -1,5 +1,5 @@
 import { useContext, useState, useRef } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { AppContext } from '../../AppContext';
 import ImgLogoTransparent from "/src/assets/svg/logo-transparent.svg";
 
@@ -9,6 +9,7 @@ const GameContainer = ({ games, title, link, onGameClick }) => {
     const [visibleCount, setVisibleCount] = useState(10);
     const [showBackBtn, setShowBackBtn] = useState(false);
     const containerRef = useRef(null);
+    const { isMobile } = useOutletContext();
 
     const handleLoadMore = () => {
         const previousCount = visibleCount;
@@ -68,7 +69,7 @@ const GameContainer = ({ games, title, link, onGameClick }) => {
             <div>
                 <div
                     className="mb-3 grid gap-4 sm:mb-5 sm:gap-2 lg:gap-4"
-                    style={{ '--games-list-grid-cols': 5, gridTemplateColumns: 'repeat(var(--games-list-grid-cols, 5), minmax(0, 1fr))' }}
+                    style={{ '--games-list-grid-cols': isMobile ? 2 : 5, gridTemplateColumns: 'repeat(var(--games-list-grid-cols, 5), minmax(0, 1fr))' }}
                 >
                     {
                         visibleGames.map((game) => (
