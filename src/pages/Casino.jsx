@@ -362,6 +362,7 @@ const Casino = () => {
           ref={refGameModal}
           onClose={closeGameModal}
           isMobile={isMobile}
+          provider={selectedProvider?.name || "Casino"}
         />
       ) : (
         <>

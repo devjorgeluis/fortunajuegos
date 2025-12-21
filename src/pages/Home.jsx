@@ -302,6 +302,7 @@ const Home = () => {
           launchInNewTab={() => launchGame(null, null, "tab")}
           ref={refGameModal}
           onClose={closeGameModal}
+          provider={selectedProvider?.name || "Casino"}
         />
       ) : (
         <>
