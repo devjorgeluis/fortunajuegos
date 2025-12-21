@@ -8,6 +8,7 @@ import ImgLiveCasino from "/src/assets/svg/live-casino.svg";
 import ImgSports from "/src/assets/svg/sports.svg";
 import ImgProfile from "/src/assets/svg/profile.svg";
 import ImgLogout from "/src/assets/svg/logout.svg";
+import ImgPhone from "/src/assets/svg/phone.svg";
 
 const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handleLogoutClick }) => {
     const navigate = useNavigate();
@@ -41,7 +42,7 @@ const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handl
 
     // Fetch live casino categories
     useEffect(() => {
-        if (!hasFetchedLiveCasino && isLoggedIn) {
+        if (!hasFetchedLiveCasino) {
             callApi(contextData, "GET", "/get-page?page=livecasino", (result) => {
                 if (result.status === 500 || result.status === 422) return;
 
@@ -153,45 +154,59 @@ const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handl
                     id: "profile",
                     name: "Cuenta",
                     image: ImgProfile,
-                    href: "/profile",
+                    href: "/profile/detail",
                     subItems: [
                         { name: "Ajustes de Cuenta", href: "/profile/detail" },
                         { name: "Historial de transacciones", href: "/profile/transaction" },
                         { name: "Historial de Casino", href: "/profile/history" },
                     ],
                 },
+            ]
+            : []),
+        ...(supportParent
+            ? [
+                {
+                    id: "support",
+                    name: "Contactá a Tu Cajero",
+                    image: ImgPhone,
+                    href: "#",
+                    subItems: [],
+                    action: () => openSupportModal(true), // Direct action
+                },
+            ]
+            : []),
+        ...(isLoggedIn
+            ? [
                 {
                     id: "logout",
                     name: "Cerrar sesión",
                     image: ImgLogout,
                     href: "#",
-                    subItems: []
+                    subItems: [],
+                    action: handleLogoutClick,
                 },
             ]
             : []),
     ];
 
-    const handleNavigation = (href) => (e) => {
+    const handleNavigation = (item) => (e) => {
         e?.stopPropagation();
-        navigate(href);
+        if (item.action) {
+            item.action();
+        } else if (item.href !== "#") {
+            navigate(item.href);
+        }
     };
 
-    // Check if current route matches menu item (for active background)
     const isMenuActive = (item) => {
         const currentPath = location.pathname;
         const hash = location.hash;
 
-        // Exact path match
         if (item.href === currentPath) return true;
-
-        // For hash routes
         if (item.href.includes("#")) {
             return location.pathname + location.hash === item.href;
         }
-
-        // For nested paths (like /profile/*)
         if (item.id === "profile" && currentPath.startsWith("/profile")) return true;
-
         return false;
     };
 
@@ -224,24 +239,13 @@ const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handl
                                             onMouseEnter={(e) => handleMouseEnter(item.id, e)}
                                             onMouseLeave={handleMouseLeave}
                                         >
-                                            {
-                                                item.id === "logout" ? 
-                                                <button 
-                                                    onClick={() => handleLogoutClick()}
-                                                    type="button" 
-                                                    className="aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full flex-shrink-0 text-ellipsis focus-visible:outline-0 rounded-lg text-sm gap-2 py-1.5 bg-transparent ring-1 ring-inset disabled:ring-theme-secondary-500 disabled:bg-transparent disabled:opacity-30 focus-visible:ring-theme-secondary-500 focus-visible:ring-2 focus:outline-theme-secondary-500/20 focus:bg-theme-secondary-500/10 focus:outline focus:outline-4 hover:bg-theme-secondary-500/10 inline-flex items-center justify-center ring-theme-secondary-100/50 text-theme-secondary-100/50 !py-3 px-4 font-normal"
-                                                >
-                                                    <img src={ImgLogout} />
-                                                </button>
-                                                :
-                                                <button
-                                                    onClick={handleNavigation(item.href)}
-                                                    className={`text-theme-secondary ring-theme-secondary/10 flex aspect-square w-full items-center justify-center gap-2.5 rounded-2xl p-4 ring-1 transition duration-75 hover:ring-theme-secondary hover:cursor-pointer ${isActive ? "bg-theme-secondary/20" : "bg-transparent"
-                                                        }`}
-                                                >
-                                                    <img src={item.image} alt={item.name} className="h-5 w-5" />
-                                                </button>
-                                            }
+                                            <button
+                                                onClick={handleNavigation(item)}
+                                                className={`text-theme-secondary ring-theme-secondary/10 flex aspect-square w-full items-center justify-center gap-2.5 rounded-2xl p-4 ring-1 transition duration-75 hover:ring-theme-secondary hover:cursor-pointer ${isActive ? "bg-theme-secondary/20" : "bg-transparent"
+                                                    }`}
+                                            >
+                                                <img src={item.image} alt={item.name} className="h-5 w-5" />
+                                            </button>
                                         </div>
                                     );
                                 }
@@ -255,11 +259,12 @@ const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handl
                                                 className="relative flex w-full flex-col rounded-2xl transition-all"
                                             >
                                                 <div
-                                                    className="flex items-center justify-between gap-2 pr-4 transition duration-75 cursor-pointer"
-                                                    onClick={() => toggleMenu(item.id)}
+                                                    className="flex items-center justify-between gap-2 pr-4 transition duration-75"
+                                                    // Only toggle expand if it has subItems
+                                                    {...(item.subItems.length > 0 ? { onClick: () => toggleMenu(item.id) } : {})}
                                                 >
                                                     <button
-                                                        onClick={item.id !== "logout" ? handleNavigation(item.href) : handleLogoutClick}
+                                                        onClick={handleNavigation(item)}
                                                         className="aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 max-w-full text-ellipsis ring-0 focus:outline-none focus-visible:outline-0 rounded-lg gap-4 inline-flex items-center justify-center flex-1 py-4 pl-4 text-sm font-bold !leading-tight transition-all lg:text-xs"
                                                     >
                                                         <span className="flex w-full items-center gap-2 text-left">
@@ -270,9 +275,9 @@ const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handl
                                                         </span>
                                                     </button>
 
-                                                    {
-                                                        item.id !== "logout" && <svg
-                                                            className={`h-6 w-6 rounded p-1 text-theme-secondary transition-transform duration-200 bg-theme-secondary-300/10 ${isMenuExpanded(item.id) ? "rotate-180" : ""
+                                                    {item.subItems.length > 0 && (
+                                                        <svg
+                                                            className={`cursor-pointer h-6 w-6 rounded p-1 text-theme-secondary transition-transform duration-200 bg-theme-secondary-300/10 ${isMenuExpanded(item.id) ? "rotate-180" : ""
                                                                 }`}
                                                             viewBox="0 0 24 24"
                                                             fill="none"
@@ -281,35 +286,38 @@ const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handl
                                                         >
                                                             <path d="m6 9 6 6 6-6" />
                                                         </svg>
-                                                    }
+                                                    )}
                                                 </div>
 
-                                                <div
-                                                    className="overflow-hidden"
-                                                    style={{ display: isMenuExpanded(item.id) ? "block" : "none" }}
-                                                >
-                                                    <div className="rounded-b-2xl bg-transparent p-0">
-                                                        <div className="flex flex-col gap-1 px-2 pb-2 pt-1">
-                                                            {item.subItems.map((sub) => (
-                                                                <button
-                                                                    key={sub.href}
-                                                                    onClick={handleNavigation(sub.href)}
-                                                                    className={`flex w-full items-center gap-2 rounded-xl px-4 py-3 text-left text-base font-normal !leading-tight text-white hover:bg-theme-secondary/5 hover:text-white lg:text-sm ${isActiveSubmenu(sub.href)
-                                                                        ? "bg-theme-secondary/10 text-theme-secondary"
-                                                                        : ""
-                                                                        }`}
-                                                                >
-                                                                    <span>{sub.name}</span>
-                                                                    {sub.name === "Hot" && (
-                                                                        <span className="rounded-full bg-theme-secondary px-1.5 py-0.5 text-[0.625rem] font-semibold text-dark-grey-900">
-                                                                            POPULARES
-                                                                        </span>
-                                                                    )}
-                                                                </button>
-                                                            ))}
+                                                {/* Submenu */}
+                                                {item.subItems.length > 0 && (
+                                                    <div
+                                                        className="overflow-hidden"
+                                                        style={{ display: isMenuExpanded(item.id) ? "block" : "none" }}
+                                                    >
+                                                        <div className="rounded-b-2xl bg-transparent p-0">
+                                                            <div className="flex flex-col gap-1 px-2 pb-2 pt-1">
+                                                                {item.subItems.map((sub) => (
+                                                                    <button
+                                                                        key={sub.href}
+                                                                        onClick={handleNavigation({ href: sub.href })}
+                                                                        className={`flex w-full items-center gap-2 rounded-xl px-4 py-3 text-left text-base font-normal !leading-tight text-white hover:bg-theme-secondary/5 hover:text-white lg:text-sm ${isActiveSubmenu(sub.href)
+                                                                                ? "bg-theme-secondary/10 text-theme-secondary"
+                                                                                : ""
+                                                                            }`}
+                                                                    >
+                                                                        <span>{sub.name}</span>
+                                                                        {sub.name === "Hot" && (
+                                                                            <span className="rounded-full bg-theme-secondary px-1.5 py-0.5 text-[0.625rem] font-semibold text-dark-grey-900">
+                                                                                POPULARES
+                                                                            </span>
+                                                                        )}
+                                                                    </button>
+                                                                ))}
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -330,9 +338,7 @@ const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handl
                     onMouseLeave={handlePopoverMouseLeave}
                 >
                     <button
-                        onClick={handleNavigation(
-                            menuItems.find((i) => i.id === hoveredMenu)?.href
-                        )}
+                        onClick={handleNavigation(menuItems.find((i) => i.id === hoveredMenu))}
                         className="pb-2 text-lg font-bold uppercase text-theme-secondary-50 hover:text-white"
                     >
                         {menuItems.find((i) => i.id === hoveredMenu)?.name}
@@ -343,7 +349,7 @@ const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handl
                         ?.subItems.map((sub) => (
                             <button
                                 key={sub.href}
-                                onClick={handleNavigation(sub.href)}
+                                onClick={handleNavigation({ href: sub.href })}
                                 className="block w-full rounded-xl px-4 py-3 text-left text-base font-normal text-white hover:bg-theme-secondary/5 hover:text-white lg:text-sm"
                             >
                                 <span>{sub.name}</span>
