@@ -11,6 +11,7 @@ import SupportModal from "../Modal/SupportModal";
 import { NavigationContext } from "./NavigationContext";
 import FullDivLoading from "../Loading/FullDivLoading";
 import MobileSearch from "../MobileSearch";
+import MobileFooter from "./mobileFooter";
 
 const Layout = () => {
     const { contextData } = useContext(AppContext);
@@ -231,6 +232,7 @@ const Layout = () => {
                             supportParentOnly={supportParentOnly}
                             supportParent={supportParent}
                         />
+                        {isMobile && <MobileFooter isSlotsOnly={isSlotsOnly} isMobile={isMobile} supportParent={supportParent} openSupportModal={openSupportModal} />}
                     </div>
                 </div>
             </NavigationContext.Provider>
