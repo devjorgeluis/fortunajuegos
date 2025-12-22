@@ -11,9 +11,11 @@ const SearchInput = ({
     const { setShowMobileSearch } = useContext(LayoutContext);
 
     const handleChange = (event) => {
-        const value = event.target.value;
-        setTxtSearch(value);
-        search({ target: { value }, key: event.key, keyCode: event.keyCode }); // Trigger search with updated value
+        if (!isMobile) {
+            const value = event.target.value;
+            setTxtSearch(value);
+            search({ target: { value }, key: event.key, keyCode: event.keyCode });
+        }
     };
 
     const handleFocus = () => {

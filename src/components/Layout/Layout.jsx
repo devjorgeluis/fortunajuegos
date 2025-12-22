@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../AppContext";
@@ -12,6 +12,7 @@ import { NavigationContext } from "./NavigationContext";
 import FullDivLoading from "../Loading/FullDivLoading";
 import MobileSearch from "../MobileSearch";
 import MobileFooter from "./MobileFooter";
+import GameModal from "../Modal/GameModal";
 
 const Layout = () => {
     const { contextData } = useContext(AppContext);
@@ -35,8 +36,19 @@ const Layout = () => {
     const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
     const [isSmallScreen, setIsSmallScreen] = useState(false);
     const [showMobileSearch, setShowMobileSearch] = useState(false);
+    
+    const [shouldShowGameModal, setShouldShowGameModal] = useState(false);
+    const [gameModalData, setGameModalData] = useState({
+        gameUrl: "",
+        gameName: null,
+        gameImg: null,
+        gameId: null,
+        gameType: null,
+        gameLauncher: null
+    });
+    const refGameModal = useRef();
+    
     const navigate = useNavigate();
-
     const location = useLocation();
     const isSportsPage = location.pathname === "/sports" || location.pathname === "/live-sports";
 
@@ -49,13 +61,11 @@ const Layout = () => {
             setIsLogin(true);
             if (contextData.session.user && contextData.session.user.balance) {
                 setUserBalance(contextData.session.user.balance);
-
                 setSupportWhatsApp(contextData.session.support_whatsapp || "");
                 setSupportTelegram(contextData.session.support_telegram || "");
                 setSupportEmail(contextData.session.support_email || "");
                 setSupportParent(contextData.session.support_parent || "");
             }
-
             refreshBalance();
         }
         getStatus();
@@ -171,6 +181,53 @@ const Layout = () => {
         setSupportParentOnly(false);
     };
 
+    const launchGameFromSearch = (game, type, launcher) => {
+        setShowMobileSearch(false);
+        setShouldShowGameModal(true);
+        setShowFullDivLoading(true);
+        
+        const gameId = game?.id;
+        const gameName = game?.name;
+        const gameImg = game?.image_local != null ? contextData.cdnUrl + game?.image_local : null;
+        
+        setGameModalData({
+            gameId: gameId,
+            gameType: type,
+            gameLauncher: launcher,
+            gameName: gameName,
+            gameImg: gameImg,
+            gameUrl: ""
+        });
+        
+        // Fetch game URL
+        callApi(contextData, "GET", "/get-game-url?game_id=" + gameId, (result) => {
+            setShowFullDivLoading(false);
+            if (result.status === "0") {
+                setGameModalData(prev => ({ 
+                    ...prev, 
+                    gameUrl: result.url 
+                }));
+            }
+        }, null);
+    };
+
+    const closeGameModal = () => {
+        setShouldShowGameModal(false);
+        setGameModalData({
+            gameUrl: "",
+            gameName: null,
+            gameImg: null,
+            gameId: null,
+            gameType: null,
+            gameLauncher: null
+        });
+    };
+
+    const reloadGame = (game, type, launcher) => {
+        const gameToUse = game || { id: gameModalData.gameId, name: gameModalData.gameName };
+        launchGameFromSearch(gameToUse, type || gameModalData.gameType, launcher || gameModalData.gameLauncher);
+    };
+
     const layoutContextValue = {
         isLogin,
         userBalance,
@@ -184,7 +241,8 @@ const Layout = () => {
         toggleSidebar,
         showMobileSearch,
         setShowMobileSearch,
-        openSupportModal
+        openSupportModal,
+        launchGameFromSearch
     };
 
     return (
@@ -194,7 +252,6 @@ const Layout = () => {
             >
                 <div className="w-full !overflow-x-clip h-dvh">
                     <div className={`grid min-h-[calc(_100dvh_-_var(--pwa-prompt-height,0px))] grid-rows-[auto_1fr_auto] pb-[var(--header-bottom-height)] [grid-template-areas:_'header_header'_'nav_main'_'nav_footer'] ${isMobile ? "" : "grid-cols-[15rem_calc(100%_-_15rem)]"}`}>
-                        {/* <FullDivLoading show={showFullDivLoading} /> */}
                         {showLoginModal && (
                             <LoginModal
                                 isMobile={isMobile}
@@ -213,16 +270,33 @@ const Layout = () => {
                             openSupportModal={openSupportModal}
                         />
                         {!isMobile && <Sidebar isSlotsOnly={isSlotsOnly} isMobile={isMobile} supportParent={supportParent} openSupportModal={openSupportModal} handleLogoutClick={handleLogoutClick} /> }
-                        <div className={isLogin ? "account-background" : ""}>
-                            <Outlet context={{ isSlotsOnly, isMobile, topGames, topArcade, topCasino, topLiveCasino }} />
-                        </div>
-                        {showMobileSearch && isMobile && (
+                        
+                        {!shouldShowGameModal && (
+                            <div className={isLogin ? "account-background" : ""}>
+                                <Outlet context={{ isSlotsOnly, isMobile, topGames, topArcade, topCasino, topLiveCasino }} />
+                            </div>
+                        )}
+                        {showMobileSearch && (
                             <MobileSearch
                                 isLogin={isLogin}
                                 isMobile={isMobile}
                                 onClose={() => setShowMobileSearch(false)}
                             />
                         )}
+                        
+                        {shouldShowGameModal && gameModalData.gameId !== null && (
+                            <GameModal
+                                gameUrl={gameModalData.gameUrl}
+                                gameName={gameModalData.gameName}
+                                gameImg={gameModalData.gameImg}
+                                reload={reloadGame}
+                                launchInNewTab={() => reloadGame(null, null, "tab")}
+                                ref={refGameModal}
+                                onClose={closeGameModal}
+                                isMobile={isMobile}
+                            />
+                        )}
+                        
                         <SupportModal
                             isOpen={showSupportModal}
                             onClose={closeSupportModal}

@@ -290,7 +290,7 @@ const Home = () => {
         />
       )}
 
-      {shouldShowGameModal && selectedGameId !== null ? (
+      {shouldShowGameModal && selectedGameId !== null && (
         <GameModal
           gameUrl={gameUrl}
           gameName={selectedGameName}
@@ -301,52 +301,52 @@ const Home = () => {
           onClose={closeGameModal}
           provider={selectedProvider?.name || "Casino"}
         />
-      ) : (
-        <>
-          <div className="overflow-x-hidden [grid-area:main] pt-4">
-            <div className="grid grid-rows-[max-content] [grid-template-areas:_'left-column'_'main-column'_'right-column'] lg:grid-cols-[auto_1fr_auto] lg:[grid-template-areas:_'left-column_main-column_right-column']">
-              <div className="max-w-[100vw] [grid-area:main-column]">
-                <div className="flex flex-col gap-4">
-                  <div className="gap-4 container md:grid md:grid-cols-1">
-                    <div className="flex flex-col">
-                      <DropWins />
-                      <PopularGames games={topGames} title="Juegos Populares" onGameClick={(game) => {
-                        if (isLogin) {
-                          launchGame(game, "slot", "tab");
+      )}
+
+      {!shouldShowGameModal && (
+        <div className="overflow-x-hidden [grid-area:main] pt-4">
+          <div className="grid grid-rows-[max-content] [grid-template-areas:_'left-column'_'main-column'_'right-column'] lg:grid-cols-[auto_1fr_auto] lg:[grid-template-areas:_'left-column_main-column_right-column']">
+            <div className="max-w-[100vw] [grid-area:main-column]">
+              <div className="flex flex-col gap-4">
+                <div className="gap-4 container md:grid md:grid-cols-1">
+                  <div className="flex flex-col">
+                    <DropWins />
+                    <PopularGames games={topGames} title="Juegos Populares" onGameClick={(game) => {
+                      if (isLogin) {
+                        launchGame(game, "slot", "tab");
+                      } else {
+                        setShowLoginModal(true);
+                      }
+                    }} />
+                    <GameCategories
+                      categories={tags}
+                      selectedCategoryIndex={selectedCategoryIndex}
+                      onCategoryClick={(tag, _id, _table, index) => {
+                        if (window.location.hash !== `#${tag.code}`) {
+                          window.location.hash = `#${tag.code}`;
                         } else {
-                          setShowLoginModal(true);
+                          setSelectedCategoryIndex(index);
+                          getPage(tag.code);
                         }
-                      }} />
-                      <GameCategories
-                        categories={tags}
-                        selectedCategoryIndex={selectedCategoryIndex}
-                        onCategoryClick={(tag, _id, _table, index) => {
-                          if (window.location.hash !== `#${tag.code}`) {
-                            window.location.hash = `#${tag.code}`;
-                          } else {
-                            setSelectedCategoryIndex(index);
-                            getPage(tag.code);
-                          }
-                        }}
-                        onCategorySelect={handleCategorySelect}
-                        isMobile={isMobile}
-                        pageType="home"
-                      />
-                      <ProviderContainer
-                        categories={categories}
-                        selectedProvider={selectedProvider}
-                        setSelectedProvider={setSelectedProvider}
-                        onProviderSelect={handleProviderSelect}
-                      />
-                      <Promotions />
-                      <Footer />
-                    </div>
+                      }}
+                      onCategorySelect={handleCategorySelect}
+                      isMobile={isMobile}
+                      pageType="home"
+                    />
+                    <ProviderContainer
+                      categories={categories}
+                      selectedProvider={selectedProvider}
+                      setSelectedProvider={setSelectedProvider}
+                      onProviderSelect={handleProviderSelect}
+                    />
+                    <Promotions />
+                    <Footer />
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </>
+        </div>
       )}
     </>
   );

@@ -14,4 +14,5 @@ export const LayoutContext = createContext({
     setShowFullDivLoading: () => { },
     isSidebarExpanded: true,
     toggleSidebar: () => { },
+    launchGameFromSearch: () => {},
 });

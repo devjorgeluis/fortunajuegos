@@ -24,7 +24,7 @@ const MobileFooter = ({
 }) => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { isSidebarExpanded, toggleSidebar } = useContext(LayoutContext);
+    const { isSidebarExpanded, toggleSidebar, setShowMobileSearch } = useContext(LayoutContext);
     const { contextData } = useContext(AppContext);
 
     const [expandedMenus, setExpandedMenus] = useState([]);
@@ -242,7 +242,7 @@ const MobileFooter = ({
                     )}
 
                     {/* Search */}
-                    <button className="group relative flex flex-1 flex-col items-center gap-1 px-2 py-1 text-primary-50">
+                    <button className="group relative flex flex-1 flex-col items-center gap-1 px-2 py-1 text-primary-50" onClick={() => setShowMobileSearch(true)}>
                         <div className="p-1">
                             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <circle cx="11" cy="11" r="8" />

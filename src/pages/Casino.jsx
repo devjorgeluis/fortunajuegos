@@ -349,7 +349,8 @@ const Casino = () => {
           isMobile={isMobile}
         />
       )}
-      {shouldShowGameModal && selectedGameId !== null ? (
+
+      {shouldShowGameModal && selectedGameId !== null && (
         <GameModal
           gameUrl={gameUrl}
           gameName={selectedGameName}
@@ -361,201 +362,202 @@ const Casino = () => {
           isMobile={isMobile}
           provider={selectedProvider?.name || "Casino"}
         />
-      ) : (
-        <>
-          <div className="overflow-x-hidden [grid-area:main] pt-4">
-            <div className="grid grid-rows-[max-content] [grid-template-areas:_'left-column'_'main-column'_'right-column'] lg:grid-cols-[auto_1fr_auto] lg:[grid-template-areas:_'left-column_main-column_right-column']">
-              <div className="max-w-[100vw] [grid-area:main-column]">
-                <div className="flex flex-col gap-4">
-                  <div className="gap-4 container md:grid md:grid-cols-1">
-                    <div className="flex flex-col">
-                      {
-                        !selectedProvider && <>
-                          <Hero />
-                          <CategoryContainer
-                            categories={tags}
-                            selectedCategoryIndex={selectedCategoryIndex}
-                            onCategoryClick={(tag, _id, _table, index) => {
-                              if (window.location.hash !== `#${tag.code}`) {
-                                window.location.hash = `#${tag.code}`;
-                              } else {
-                                setSelectedCategoryIndex(index);
-                                getPage(tag.code);
-                                setIsLobbySelected(tag.code === "home");
-                              }
-                            }}
-                            onCategorySelect={handleCategorySelect}
-                            isMobile={isMobile}
-                            pageType="casino"
-                          />
-                          {isLobbySelected && (
-                            <>
-                              <PopularGames
-                                games={topCasino}
-                                title="Juegos Populares"
-                                onGameClick={(game) => {
-                                  if (isLogin) {
-                                    launchGame(game, "slot", "tab");
-                                  } else {
-                                    setShowLoginModal(true);
-                                  }
-                                }}
-                              />
-                              <PopularGames
-                                games={topArcade}
-                                title="Juegos Crash"
-                                onGameClick={(game) => {
-                                  if (isLogin) {
-                                    launchGame(game, "slot", "tab");
-                                  } else {
-                                    setShowLoginModal(true);
-                                  }
-                                }}
-                              />
-                            </>
-                          )}
-                        </>
-                      }
+      )}
 
-                      {
-                        selectedProvider && selectedProvider.name ? <div className="grid grid-cols-1 [grid-template-areas:'heading'_'filters'_'content']">
-                          <div className="grid grid-cols-1 [grid-template-areas:'heading'_'filters'_'content']">
-                            <div className="[grid-area:content]">
-                              <div className="flex flex-col gap-4">
-                                <div className="contents">
-                                  <img
-                                    src={selectedProvider.image_local != null && selectedProvider.image_local !== "" ? contextData.cdnUrl + selectedProvider.image_local : selectedProvider.image_url}
-                                    alt="EspressoGames"
-                                    className="w-32 object-contain"
-                                    loading="eager"
-                                  />
-                                </div>
-                                <h1 className="mb-8 text-lg font-extrabold leading-normal lg:text-2xl">
-                                  {selectedProvider.name}
-                                </h1>
+      {/* Only show Casino content when game modal is NOT shown */}
+      {!shouldShowGameModal && (
+        <div className="overflow-x-hidden [grid-area:main] pt-4">
+          <div className="grid grid-rows-[max-content] [grid-template-areas:_'left-column'_'main-column'_'right-column'] lg:grid-cols-[auto_1fr_auto] lg:[grid-template-areas:_'left-column_main-column_right-column']">
+            <div className="max-w-[100vw] [grid-area:main-column]">
+              <div className="flex flex-col gap-4">
+                <div className="gap-4 container md:grid md:grid-cols-1">
+                  <div className="flex flex-col">
+                    {
+                      !selectedProvider && <>
+                        <Hero />
+                        <CategoryContainer
+                          categories={tags}
+                          selectedCategoryIndex={selectedCategoryIndex}
+                          onCategoryClick={(tag, _id, _table, index) => {
+                            if (window.location.hash !== `#${tag.code}`) {
+                              window.location.hash = `#${tag.code}`;
+                            } else {
+                              setSelectedCategoryIndex(index);
+                              getPage(tag.code);
+                              setIsLobbySelected(tag.code === "home");
+                            }
+                          }}
+                          onCategorySelect={handleCategorySelect}
+                          isMobile={isMobile}
+                          pageType="casino"
+                        />
+                        {isLobbySelected && (
+                          <>
+                            <PopularGames
+                              games={topCasino}
+                              title="Juegos Populares"
+                              onGameClick={(game) => {
+                                if (isLogin) {
+                                  launchGame(game, "slot", "tab");
+                                } else {
+                                  setShowLoginModal(true);
+                                }
+                              }}
+                            />
+                            <PopularGames
+                              games={topArcade}
+                              title="Juegos Crash"
+                              onGameClick={(game) => {
+                                if (isLogin) {
+                                  launchGame(game, "slot", "tab");
+                                } else {
+                                  setShowLoginModal(true);
+                                }
+                              }}
+                            />
+                          </>
+                        )}
+                      </>
+                    }
+
+                    {
+                      selectedProvider && selectedProvider.name ? <div className="grid grid-cols-1 [grid-template-areas:'heading'_'filters'_'content']">
+                        <div className="grid grid-cols-1 [grid-template-areas:'heading'_'filters'_'content']">
+                          <div className="[grid-area:content]">
+                            <div className="flex flex-col gap-4">
+                              <div className="contents">
+                                <img
+                                  src={selectedProvider.image_local != null && selectedProvider.image_local !== "" ? contextData.cdnUrl + selectedProvider.image_local : selectedProvider.image_url}
+                                  alt="EspressoGames"
+                                  className="w-32 object-contain"
+                                  loading="eager"
+                                />
                               </div>
-
-                              <div className="mb-6 grid grid-cols-12 gap-4 sm:mb-10 sm:gap-2.5 lg:gap-6">
-                                {games.map((game) => (
-                                  <div className="col-span-6 sm:col-span-3">
-                                    <GameCard
-                                      key={"popular" + game.id}
-                                      id={game.id}
-                                      provider={activeCategory?.name || 'Casino'}
-                                      title={game.name}
-                                      imageSrc={game.image_local !== null ? contextData.cdnUrl + game.image_local : game.image_url}
-                                      onClick={() => (isLogin ? launchGame(game, "slot", "tab") : handleLoginClick())}
-                                    />
-                                  </div>
-                                ))}
-                              </div>
-
-                              {/* Load More Button */}
-                              <div className="relative flex min-h-[2.75rem] items-center justify-center sm:justify-normal">
-                                <button
-                                  onClick={loadMoreGames}
-                                  type="button"
-                                  className="inline-flex w-full sm:max-w-[15.875rem] sm:absolute sm:left-1/2 sm:-translate-x-1/2 items-center justify-center rounded-lg bg-transparent px-4 py-3 font-bold text-base text-theme-secondary-500 ring-1 ring-inset ring-current hover:bg-theme-secondary-500/10"
-                                >
-                                  Cargar más
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div> : <>
-                          <ProviderContainer
-                            categories={categories}
-                            selectedProvider={selectedProvider}
-                            setSelectedProvider={setSelectedProvider}
-                            onProviderSelect={handleProviderSelect}
-                          />
-                          {isLobbySelected && <Promotions />}
-
-                          <div className="grid grid-cols-1 [grid-template-areas:'heading'_'filters'_'content'] pb-6 pt-10 sm:pb-12 sm:pt-16">
-                            <h1 className="mb-6 flex flex-col gap-4 text-4xl font-bold -tracking-[0.6px] text-white [grid-area:heading] sm:mb-12 sm:flex-row sm:items-center sm:gap-6 sm:-tracking-[0.72px]">
-                              <a
-                                onClick={() => navigate("/")}
-                                className="cursor-pointer aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full flex-shrink-0 text-ellipsis ring-0 focus-visible:outline-0 font-bold text-base gap-2.5 text-theme-secondary-500 bg-theme-secondary-500/10 disabled:bg-theme-secondary-500/10 disabled:text-theme-secondary-500 disabled:opacity-30 focus-visible:ring-theme-secondary-500 focus-visible:ring-2 focus-visible:ring-inset focus:outline-theme-secondary-500/10 focus:bg-theme-secondary-500/20 focus:outline focus:outline-4 hover:bg-theme-secondary-500/20 inline-flex items-center justify-center w-fit rounded-lg p-2 sm:p-2.5 lg:p-3"
-                                aria-label="Volver al inicio"
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                >
-                                  <path d="M5 12h14M5 12l6 6m-6-6l6-6" />
-                                </svg>
-                              </a>
-                              Todos los juegos de casino
-                            </h1>
-
-                            <div className="mb-6 grid w-full grid-cols-12 gap-2 [grid-area:filters] sm:mb-12 lg:flex lg:flex-row lg:justify-between lg:gap-4">
-                              <SearchInput
-                                txtSearch={txtSearch}
-                                setTxtSearch={setTxtSearch}
-                                searchRef={searchRef}
-                                search={search}
-                                isMobile={isMobile}
-                              />
-                              <SearchSelect
-                                categories={categories}
-                                selectedProvider={selectedProvider}
-                                setSelectedProvider={setSelectedProvider}
-                                onProviderSelect={handleProviderSelect}
-                              />
+                              <h1 className="mb-8 text-lg font-extrabold leading-normal lg:text-2xl">
+                                {selectedProvider.name}
+                              </h1>
                             </div>
 
-                            <div className="[grid-area:content]">
-                              <div
-                                className="mb-6 grid gap-x-2 gap-y-8 sm:mb-12 lg:gap-x-4"
-                                style={{
-                                  '--games-list-grid-cols': 6,
-                                  gridTemplateColumns: 'repeat(var(--games-list-grid-cols, 5), minmax(0, 1fr))'
-                                }}
-                              >
-                                {games.map((game) => (
+                            <div className="mb-6 grid grid-cols-12 gap-4 sm:mb-10 sm:gap-2.5 lg:gap-6">
+                              {games.map((game) => (
+                                <div className="col-span-6 sm:col-span-3">
                                   <GameCard
-                                    key={"top-crash-" + game.id}
+                                    key={"popular" + game.id}
                                     id={game.id}
                                     provider={activeCategory?.name || 'Casino'}
                                     title={game.name}
                                     imageSrc={game.image_local !== null ? contextData.cdnUrl + game.image_local : game.image_url}
                                     onClick={() => (isLogin ? launchGame(game, "slot", "tab") : handleLoginClick())}
                                   />
-                                ))}
-                                {isLoadingGames && <LoadGames />}
-                              </div>
-
-                              {
-                                txtSearch !== "" &&
-                                <div className="relative flex min-h-12 items-center justify-center sm:justify-normal">
-                                  <button
-                                    onClick={loadMoreGames}
-                                    type="button"
-                                    className="inline-flex items-center justify-center rounded-lg bg-theme-secondary-500/10 px-4 py-3 font-bold text-base text-theme-secondary-500 hover:bg-theme-secondary-500/20 sm:absolute sm:left-1/2 sm:-translate-x-1/2"
-                                  >
-                                    Cargar más
-                                  </button>
                                 </div>
-                              }
+                              ))}
+                            </div>
+
+                            {/* Load More Button */}
+                            <div className="relative flex min-h-[2.75rem] items-center justify-center sm:justify-normal">
+                              <button
+                                onClick={loadMoreGames}
+                                type="button"
+                                className="inline-flex w-full sm:max-w-[15.875rem] sm:absolute sm:left-1/2 sm:-translate-x-1/2 items-center justify-center rounded-lg bg-transparent px-4 py-3 font-bold text-base text-theme-secondary-500 ring-1 ring-inset ring-current hover:bg-theme-secondary-500/10"
+                              >
+                                Cargar más
+                              </button>
                             </div>
                           </div>
-                        </>
-                      }
+                        </div>
+                      </div> : <>
+                        <ProviderContainer
+                          categories={categories}
+                          selectedProvider={selectedProvider}
+                          setSelectedProvider={setSelectedProvider}
+                          onProviderSelect={handleProviderSelect}
+                        />
+                        {isLobbySelected && <Promotions />}
 
-                      <Footer />
-                    </div>
+                        <div className="grid grid-cols-1 [grid-template-areas:'heading'_'filters'_'content'] pb-6 pt-10 sm:pb-12 sm:pt-16">
+                          <h1 className="mb-6 flex flex-col gap-4 text-4xl font-bold -tracking-[0.6px] text-white [grid-area:heading] sm:mb-12 sm:flex-row sm:items-center sm:gap-6 sm:-tracking-[0.72px]">
+                            <a
+                              onClick={() => navigate("/")}
+                              className="cursor-pointer aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full flex-shrink-0 text-ellipsis ring-0 focus-visible:outline-0 font-bold text-base gap-2.5 text-theme-secondary-500 bg-theme-secondary-500/10 disabled:bg-theme-secondary-500/10 disabled:text-theme-secondary-500 disabled:opacity-30 focus-visible:ring-theme-secondary-500 focus-visible:ring-2 focus-visible:ring-inset focus:outline-theme-secondary-500/10 focus:bg-theme-secondary-500/20 focus:outline focus:outline-4 hover:bg-theme-secondary-500/20 inline-flex items-center justify-center w-fit rounded-lg p-2 sm:p-2.5 lg:p-3"
+                              aria-label="Volver al inicio"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M5 12h14M5 12l6 6m-6-6l6-6" />
+                              </svg>
+                            </a>
+                            Todos los juegos de casino
+                          </h1>
+
+                          <div className="mb-6 grid w-full grid-cols-12 gap-2 [grid-area:filters] sm:mb-12 lg:flex lg:flex-row lg:justify-between lg:gap-4">
+                            <SearchInput
+                              txtSearch={txtSearch}
+                              setTxtSearch={setTxtSearch}
+                              searchRef={searchRef}
+                              search={search}
+                              isMobile={isMobile}
+                            />
+                            <SearchSelect
+                              categories={categories}
+                              selectedProvider={selectedProvider}
+                              setSelectedProvider={setSelectedProvider}
+                              onProviderSelect={handleProviderSelect}
+                            />
+                          </div>
+
+                          <div className="[grid-area:content]">
+                            <div
+                              className="mb-6 grid gap-x-2 gap-y-8 sm:mb-12 lg:gap-x-4"
+                              style={{
+                                '--games-list-grid-cols': 6,
+                                gridTemplateColumns: 'repeat(var(--games-list-grid-cols, 5), minmax(0, 1fr))'
+                              }}
+                            >
+                              {games.map((game) => (
+                                <GameCard
+                                  key={"top-crash-" + game.id}
+                                  id={game.id}
+                                  provider={activeCategory?.name || 'Casino'}
+                                  title={game.name}
+                                  imageSrc={game.image_local !== null ? contextData.cdnUrl + game.image_local : game.image_url}
+                                  onClick={() => (isLogin ? launchGame(game, "slot", "tab") : handleLoginClick())}
+                                />
+                              ))}
+                              {isLoadingGames && <LoadGames />}
+                            </div>
+
+                            {
+                              txtSearch !== "" &&
+                              <div className="relative flex min-h-12 items-center justify-center sm:justify-normal">
+                                <button
+                                  onClick={loadMoreGames}
+                                  type="button"
+                                  className="inline-flex items-center justify-center rounded-lg bg-theme-secondary-500/10 px-4 py-3 font-bold text-base text-theme-secondary-500 hover:bg-theme-secondary-500/20 sm:absolute sm:left-1/2 sm:-translate-x-1/2"
+                                >
+                                  Cargar más
+                                </button>
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      </>
+                    }
+
+                    <Footer />
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </>
+        </div>
       )}
     </>
   );
