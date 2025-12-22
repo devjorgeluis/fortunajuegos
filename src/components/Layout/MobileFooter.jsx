@@ -173,7 +173,10 @@ const MobileFooter = ({
                     image: ImgPhone,
                     href: "#",
                     subItems: [],
-                    action: () => openSupportModal(true),
+                    action: () => {
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                        openSupportModal(true);
+                    },
                 },
             ]
             : []),
