@@ -34,29 +34,20 @@ const ProviderContainer = ({
     };
 
     return (
-        <div className="relative mb-6 py-4 lg:py-6">
-            <div className="pointer-events-none absolute inset-0 z-10 h-full w-full [mask-image:linear-gradient(to_right,transparent_0%,black_15%,black_85%,transparent_100%)]" />
-
-            <div className="relative mb-4 flex items-center justify-between px-4 py-4">
+        <div className="relative overflow-hidden py-2 lg:py-5">
+            <div className="relative mb-3 flex items-center justify-between gap-2 py-4">
                 {
                     !isMobile && 
                     <img
                         src={ImgLogoTransparent}
                         alt="fortunajuegos"
-                        className="absolute left-4 top-4 h-auto w-16 opacity-50 lg:left-0 lg:top-0.5"
+                        className="absolute left-0 -top-1/2 h-auto w-[4.25rem] translate-y-2 opacity-50"
                     />
                 }
 
                 <h1 className={`text-center text-xs font-bold uppercase tracking-wider text-dark-grey-50 sm:text-sm`}>
                     Proveedores
                 </h1>
-
-                <a
-                    href="#"
-                    className="rounded-lg bg-theme-secondary-500/10 px-4 py-3 font-bold text-theme-secondary-500 transition hover:bg-theme-secondary-500/20"
-                >
-                    Ver todo
-                </a>
             </div>
 
             <div className="relative px-4 lg:px-0">

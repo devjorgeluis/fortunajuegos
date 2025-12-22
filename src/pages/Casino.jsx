@@ -442,7 +442,7 @@ const Casino = () => {
                               {games.map((game) => (
                                 <div className="col-span-6 sm:col-span-3">
                                   <GameCard
-                                    key={"popular" + game.id}
+                                    key={"live-popular" + game.id}
                                     id={game.id}
                                     provider={activeCategory?.name || 'Casino'}
                                     title={game.name}
@@ -523,7 +523,7 @@ const Casino = () => {
                             >
                               {games.map((game) => (
                                 <GameCard
-                                  key={"top-crash-" + game.id}
+                                  key={"live-top-crash-" + game.id}
                                   id={game.id}
                                   provider={activeCategory?.name || 'Casino'}
                                   title={game.name}

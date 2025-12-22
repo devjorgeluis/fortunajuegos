@@ -49,7 +49,7 @@ const PopularGames = ({ games, title, icon, link, onGameClick }) => {
 
     return (
         <div ref={containerRef} className="relative overflow-hidden sm:pb-5 py-6">
-            <div className="relative mb-5 flex items-center justify-between gap-2 py-4">
+            <div className="relative mb-5 flex items-center justify-between gap-2 py-4 min-h-20">
                 <img
                     src={ImgLogoTransparent}
                     alt="fortunajuegos"
@@ -58,12 +58,6 @@ const PopularGames = ({ games, title, icon, link, onGameClick }) => {
                 <h2 className="text-dark-grey-50 text-xs font-bold uppercase !leading-[1.1] tracking-[1.2px] md:text-sm">
                     {title}
                 </h2>
-                <a
-                    className="cursor-pointer aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full text-ellipsis ring-0 focus-visible:outline-0 font-bold rounded-lg text-base gap-3 px-4 py-3 text-theme-secondary-500 bg-theme-secondary-500/10 disabled:bg-theme-secondary-500/10 disabled:text-theme-secondary-500 disabled:opacity-30 focus-visible:ring-theme-secondary-500 focus-visible:ring-2 focus-visible:ring-inset focus:outline-theme-secondary-500/10 focus:bg-theme-secondary-500/20 focus:outline focus:outline-4 hover:bg-theme-secondary-500/20 inline-flex items-center justify-center min-h-12"
-                    onClick={() => navigate(link)}
-                >
-                    Ver todo
-                </a>
             </div>
 
             <div>

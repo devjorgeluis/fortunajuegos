@@ -12,6 +12,8 @@ import Promotions from "../components/Home/Promotions";
 import GameModal from "../components/Modal/GameModal";
 import LoginModal from "../components/Modal/LoginModal";
 import Footer from "../components/Layout/Footer";
+import GameCard from "../components/GameCard";
+import LoadGames from "../components/Loading/LoadGames";
 import "animate.css";
 
 import ImgCategoryBackground1 from "/src/assets/img/category-background1.webp";
@@ -45,33 +47,35 @@ const Home = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [shouldShowGameModal, setShouldShowGameModal] = useState(false);
   const [isGameLoadingError, setIsGameLoadingError] = useState(false);
+  const [isLoadingGames, setIsLoadingGames] = useState(false);
+
   const refGameModal = useRef();
   const { isSlotsOnly, isMobile, topGames } = useOutletContext();
 
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
+      if (document.visibilityState === "visible") {
         const currentPath = window.location.pathname;
-        if (currentPath === '/' || currentPath === '') {
+        if (currentPath === "/" || currentPath === "") {
           getPage("home");
           getStatus();
-
-          selectedGameId = null;
-          selectedGameType = null;
-          selectedGameLauncher = null;
-          setShouldShowGameModal(false);
-          setGameUrl("");
+          resetGameSelection();
         }
       }
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, []);
 
   useEffect(() => {
+    resetGameSelection();
+    getPage("home");
+    getStatus();
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
+  const resetGameSelection = () => {
     selectedGameId = null;
     selectedGameType = null;
     selectedGameLauncher = null;
@@ -79,203 +83,148 @@ const Home = () => {
     selectedGameImg = null;
     setGameUrl("");
     setShouldShowGameModal(false);
-
-    getPage("home");
-    getStatus();
-
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
+  };
 
   useEffect(() => {
     const isSlotsOnlyFalse = isSlotsOnly === false || isSlotsOnly === "false";
-    let tmpTags = isSlotsOnlyFalse
-      ? [
-        { name: "Populares", code: "hot", image: ImgCategory1, backgroundImage: ImgCategoryBackground1 },
-        { name: "Jokers", code: "joker", image: ImgCategory2, backgroundImage: ImgCategoryBackground2 },
-        { name: "Juegos de crash", code: "arcade", image: ImgCategory3, backgroundImage: ImgCategoryBackground3 },
-        { name: "Ruletas", code: "roulette", image: ImgCategory4, backgroundImage: ImgCategoryBackground4 },
-      ]
-      : [
-        { name: "Populares", code: "hot", image: ImgCategory1, backgroundImage: ImgCategoryBackground1 },
-        { name: "Jokers", code: "joker", image: ImgCategory2, backgroundImage: ImgCategoryBackground2 },
-        { name: "Megaways", code: "megaways", image: ImgCategory4, backgroundImage: ImgCategoryBackground4 },
-      ];
-
-    setTags(tmpTags);
+    setTags(
+      isSlotsOnlyFalse
+        ? [
+          { name: "Populares", code: "hot", image: ImgCategory1, backgroundImage: ImgCategoryBackground1 },
+          { name: "Jokers", code: "joker", image: ImgCategory2, backgroundImage: ImgCategoryBackground2 },
+          { name: "Juegos de crash", code: "arcade", image: ImgCategory3, backgroundImage: ImgCategoryBackground3 },
+          { name: "Ruletas", code: "roulette", image: ImgCategory4, backgroundImage: ImgCategoryBackground4 },
+        ]
+        : [
+          { name: "Populares", code: "hot", image: ImgCategory1, backgroundImage: ImgCategoryBackground1 },
+          { name: "Jokers", code: "joker", image: ImgCategory2, backgroundImage: ImgCategoryBackground2 },
+          { name: "Megaways", code: "megaways", image: ImgCategory4, backgroundImage: ImgCategoryBackground4 },
+        ]
+    );
   }, [isSlotsOnly]);
 
   const getStatus = () => {
-    callApi(contextData, "GET", "/get-status", callbackGetStatus, null);
-  };
-
-  const callbackGetStatus = (result) => {
-    if (result.status === 500 || result.status === 422) {
-
-    } else {
-      contextData.slots_only = result && result.slots_only;
-    }
+    callApi(contextData, "GET", "/get-status", (result) => {
+      if (result.status !== 500 && result.status !== 422) {
+        contextData.slots_only = result?.slots_only;
+      }
+    }, null);
   };
 
   const getPage = (page) => {
     setCategories([]);
     setGames([]);
-    callApi(contextData, "GET", "/get-page?page=" + page, callbackGetPage, null);
+    setIsLoadingGames(true);
+    callApi(contextData, "GET", "/get-page?page=" + page, (result) => callbackGetPage(result, page), null);
   };
 
-  const callbackGetPage = (result) => {
-    if (result.status === 500 || result.status === 422) {
+  const callbackGetPage = (result, page) => {
+    if (result.status === 500 || result.status === 422) return;
 
-    } else {
-      setCategories(result.data.categories);
-      setPageData(result.data);
-      setSelectedProvider(null);
+    setCategories(result.data.categories || []);
+    setPageData(result.data);
+    setSelectedProvider(null);
 
-      if (result.data.menu === "home") {
-        setMainCategories(result.data.categories);
-      }
-
-      if (pageData.url && pageData.url !== null) {
-        if (contextData.isMobile) {
-          // Mobile sports workaround
-        }
-      } else {
-        if (result.data.page_group_type === "categories") {
-          setSelectedCategoryIndex(-1);
-        }
-        if (result.data.page_group_type === "games") {
-          loadMoreContent();
-        }
-      }
-      pageCurrent = 0;
+    if (result.data.menu === "home") {
+      setMainCategories(result.data.categories || []);
     }
-  };
 
-  const loadMoreContent = () => {
-    let item = categories[selectedCategoryIndex];
-    if (item) {
-      fetchContent(item, item.id, item.table_name, selectedCategoryIndex, false);
+    if (result.data.page_group_type === "games") {
+      configureImageSrc(result);
+      setGames(result.data.categories || result.content || []);
+      pageCurrent = 1;
     }
+
+    setIsLoadingGames(false);
   };
 
-  const fetchContent = (category, categoryId, tableName, categoryIndex, resetCurrentPage, pageGroupCode = null) => {
-    let pageSize = 30;
-
-    if (resetCurrentPage === true) {
+  const fetchContent = (category, categoryId, tableName, categoryIndex, reset = false) => {
+    if (reset) {
       pageCurrent = 0;
       setGames([]);
     }
 
     setSelectedCategoryIndex(categoryIndex);
+    setIsLoadingGames(true);
 
-    const groupCode = pageGroupCode || pageData.page_group_code || "default_pages_home"
+    const groupCode = pageData.page_group_code || "default_pages_home";
 
-    let apiUrl =
-      "/get-content?page_group_type=categories&page_group_code=" +
-      groupCode +
-      "&table_name=" +
-      tableName +
-      "&apigames_category_id=" +
-      categoryId +
-      "&page=" +
-      pageCurrent +
-      "&length=" +
-      pageSize;
+    let apiUrl = `/get-content?page_group_type=categories&page_group_code=${groupCode}&table_name=${tableName}&apigames_category_id=${categoryId}&page=${pageCurrent}&length=30`;
 
-    if (selectedProvider && selectedProvider.id) {
-      apiUrl += "&provider=" + selectedProvider.id;
+    if (selectedProvider?.id) {
+      apiUrl += `&provider=${selectedProvider.id}`;
     }
 
     callApi(contextData, "GET", apiUrl, callbackFetchContent, null);
   };
 
   const callbackFetchContent = (result) => {
-    if (result.status === 500 || result.status === 422) {
+    if (result.status === 500 || result.status === 422) return;
 
+    configureImageSrc(result);
+
+    if (pageCurrent === 0) {
+      setGames(result.content || []);
     } else {
-      if (pageCurrent === 0) {
-        configureImageSrc(result);
-        setGames(result.content);
-      } else {
-        configureImageSrc(result);
-        setGames([...games, ...result.content]);
-      }
-      pageCurrent += 1;
+      setGames((prev) => [...prev, ...(result.content || [])]);
     }
+
+    pageCurrent += 1;
+    setIsLoadingGames(false);
   };
 
   const configureImageSrc = (result) => {
-    (result.content || []).forEach((element) => {
-      let imageDataSrc = element.image_url;
-      if (element.image_local !== null) {
-        imageDataSrc = contextData.cdnUrl + element.image_local;
-      }
-      element.imageDataSrc = imageDataSrc;
+    (result.content || []).forEach((el) => {
+      el.imageDataSrc = el.image_local ? contextData.cdnUrl + el.image_local : el.image_url;
     });
   };
 
-  const launchGame = (game, type, launcher) => {
+  const launchGame = (game, type = "slot", launcher = "tab") => {
     setShouldShowGameModal(true);
     setShowFullDivLoading(true);
-    selectedGameId = game.id !== null ? game.id : selectedGameId;
-    selectedGameType = type !== null ? type : selectedGameType;
-    selectedGameLauncher = launcher !== null ? launcher : selectedGameLauncher;
+
+    selectedGameId = game?.id ?? selectedGameId;
+    selectedGameType = type;
+    selectedGameLauncher = launcher;
     selectedGameName = game?.name;
-    selectedGameImg = game?.image_local != null ? contextData.cdnUrl + game?.image_local : null;
-    callApi(contextData, "GET", "/get-game-url?game_id=" + selectedGameId, callbackLaunchGame, null);
+    selectedGameImg = game?.image_local ? contextData.cdnUrl + game.image_local : null;
+
+    callApi(contextData, "GET", `/get-game-url?game_id=${selectedGameId}`, callbackLaunchGame, null);
   };
 
   const callbackLaunchGame = (result) => {
     setShowFullDivLoading(false);
     if (result.status === "0") {
-      switch (selectedGameLauncher) {
-        case "modal":
-        case "tab":
-          setGameUrl(result.url);
-          break;
-      }
+      setGameUrl(result.url);
     } else {
       setIsGameLoadingError(true);
     }
   };
 
   const closeGameModal = () => {
-    selectedGameId = null;
-    selectedGameType = null;
-    selectedGameLauncher = null;
-    selectedGameName = null;
-    selectedGameImg = null;
-    setGameUrl("");
-    setShouldShowGameModal(false);
-  };
-
-  const handleLoginConfirm = () => {
-    setShowLoginModal(false);
-  };
-
-  const handleCategorySelect = () => {
-    setSelectedProvider(null);
+    resetGameSelection();
   };
 
   const handleProviderSelect = (provider, index = 0) => {
     setSelectedProvider(provider);
+    setSelectedCategoryIndex(-1);
+    window.scrollTo(0, 0);
 
     if (provider) {
-      setSelectedCategoryIndex(-1);
-
-      fetchContent(
-        provider,
-        provider.id,
-        provider.table_name,
-        index,
-        true
-      );
+      fetchContent(provider, provider.id, provider.table_name, index, true);
     } else {
+      // Reset to default view
+      setSelectedCategoryIndex(0);
       const firstCategory = categories[0];
       if (firstCategory) {
-        setActiveCategory(firstCategory);
-        setSelectedCategoryIndex(0);
         fetchContent(firstCategory, firstCategory.id, firstCategory.table_name, 0, true);
       }
+    }
+  };
+
+  const loadMoreGames = () => {
+    if (selectedProvider) {
+      fetchContent(selectedProvider, selectedProvider.id, selectedProvider.table_name, -1, false);
     }
   };
 
@@ -285,12 +234,11 @@ const Home = () => {
         <LoginModal
           isOpen={showLoginModal}
           onClose={() => setShowLoginModal(false)}
-          onConfirm={handleLoginConfirm}
           isMobile={isMobile}
         />
       )}
 
-      {shouldShowGameModal && selectedGameId !== null && (
+      {shouldShowGameModal && selectedGameId && (
         <GameModal
           gameUrl={gameUrl}
           gameName={selectedGameName}
@@ -310,36 +258,80 @@ const Home = () => {
               <div className="flex flex-col gap-4">
                 <div className="gap-4 container md:grid md:grid-cols-1">
                   <div className="flex flex-col">
-                    <DropWins />
-                    <PopularGames games={topGames} title="Juegos Populares" onGameClick={(game) => {
-                      if (isLogin) {
-                        launchGame(game, "slot", "tab");
-                      } else {
-                        setShowLoginModal(true);
-                      }
-                    }} />
-                    <GameCategories
-                      categories={tags}
-                      selectedCategoryIndex={selectedCategoryIndex}
-                      onCategoryClick={(tag, _id, _table, index) => {
-                        if (window.location.hash !== `#${tag.code}`) {
-                          window.location.hash = `#${tag.code}`;
-                        } else {
-                          setSelectedCategoryIndex(index);
-                          getPage(tag.code);
-                        }
-                      }}
-                      onCategorySelect={handleCategorySelect}
-                      isMobile={isMobile}
-                      pageType="home"
-                    />
-                    <ProviderContainer
-                      categories={categories}
-                      selectedProvider={selectedProvider}
-                      setSelectedProvider={setSelectedProvider}
-                      onProviderSelect={handleProviderSelect}
-                    />
-                    <Promotions />
+                    {selectedProvider ? (
+                      <div className="flex flex-col gap-6 pb-10">
+                        <div className="flex flex-col gap-4">
+                          {selectedProvider.image_local || selectedProvider.image_url ? (
+                            <img
+                              src={
+                                selectedProvider.image_local
+                                  ? contextData.cdnUrl + selectedProvider.image_local
+                                  : selectedProvider.image_url
+                              }
+                              alt={selectedProvider.name}
+                              className="w-32 object-contain"
+                              loading="eager"
+                            />
+                          ) : null}
+                          <h1 className="text-3xl font-bold text-white">{selectedProvider.name}</h1>
+                        </div>
+
+                        <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+                          {games.map((game) => (
+                            <GameCard
+                              key={game.id}
+                              id={game.id}
+                              provider={selectedProvider.name}
+                              title={game.name}
+                              imageSrc={game.imageDataSrc}
+                              onClick={() => (isLogin ? launchGame(game) : setShowLoginModal(true))}
+                            />
+                          ))}
+                          {isLoadingGames && <LoadGames />}
+                        </div>
+
+                        <div className="flex justify-center mt-8">
+                          <button
+                            onClick={loadMoreGames}
+                            className="rounded-lg bg-theme-secondary-500/10 px-8 py-3 font-bold text-theme-secondary-500 hover:bg-theme-secondary-500/20"
+                          >
+                            Cargar más
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <DropWins />
+                        <PopularGames
+                          games={topGames}
+                          title="Juegos Populares"
+                          onGameClick={(game) => (isLogin ? launchGame(game) : setShowLoginModal(true))}
+                        />
+                        <GameCategories
+                          categories={tags}
+                          selectedCategoryIndex={selectedCategoryIndex}
+                          onCategoryClick={(tag, _id, _table, index) => {
+                            if (window.location.hash !== `#${tag.code}`) {
+                              window.location.hash = `#${tag.code}`;
+                            } else {
+                              setSelectedCategoryIndex(index);
+                              getPage(tag.code);
+                            }
+                          }}
+                          onCategorySelect={() => setSelectedProvider(null)}
+                          isMobile={isMobile}
+                          pageType="home"
+                        />
+                        <ProviderContainer
+                          categories={categories}
+                          selectedProvider={selectedProvider}
+                          setSelectedProvider={setSelectedProvider}
+                          onProviderSelect={handleProviderSelect}
+                        />
+                        <Promotions />
+                      </>
+                    )}
+
                     <Footer />
                   </div>
                 </div>

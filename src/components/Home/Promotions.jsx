@@ -1,3 +1,4 @@
+import { useOutletContext } from "react-router-dom";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css';
@@ -9,6 +10,8 @@ import ImgPromotion2 from "/src/assets/img/promotion2.webp";
 import ImgPromotion3 from "/src/assets/img/promotion3.webp";
 
 const Promotions = () => {
+    const { isMobile } = useOutletContext();
+
     const promotions = [
         {
             title: "Mega Combi Bono",
@@ -30,11 +33,14 @@ const Promotions = () => {
     return (
         <div className="relative overflow-hidden py-2 lg:py-5">
             <div className="relative mb-3 flex items-center justify-between gap-2 py-4">
-                <img
-                    src={ImgLogoTransparent}
-                    alt="fortunajuegos"
-                    className="absolute left-0 -top-1/2 h-auto w-[4.25rem] translate-y-2 opacity-50"
-                />
+                {
+                    !isMobile && 
+                    <img
+                        src={ImgLogoTransparent}
+                        alt="fortunajuegos"
+                        className="absolute left-0 -top-1/2 h-auto w-[4.25rem] translate-y-2 opacity-50"
+                    />
+                }
                 <h2 className="text-dark-grey-50 text-xs font-bold uppercase !leading-[1.1] tracking-[1.2px] md:text-sm">
                     Promociones
                 </h2>
