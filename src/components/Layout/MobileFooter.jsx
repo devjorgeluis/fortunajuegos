@@ -12,6 +12,8 @@ import ImgMobileSports from "/src/assets/svg/mobile-sports.svg";
 import ImgProfile from "/src/assets/svg/profile.svg";
 import ImgLogout from "/src/assets/svg/logout.svg";
 import ImgPhone from "/src/assets/svg/phone.svg";
+import ImgMenu from "/src/assets/svg/menu.svg";
+import ImgClose from "/src/assets/svg/close.svg";
 
 const MobileFooter = ({
     isSlotsOnly,
@@ -51,9 +53,7 @@ const MobileFooter = ({
                 (result) => {
                     if (result.status === 500 || result.status === 422) return;
 
-                    const menus = [
-                        { name: "Inicio", code: "home", href: "/live-casino#home" },
-                    ];
+                    const menus = [{ name: "Inicio", code: "home", href: "/live-casino#home" }];
                     result.data.categories.forEach((element) => {
                         menus.push({
                             name: element.name,
@@ -75,11 +75,7 @@ const MobileFooter = ({
         const currentPath = location.pathname;
         const hash = location.hash.slice(1);
 
-        if (
-            currentPath.startsWith("/live-casino") &&
-            hash &&
-            !isMenuExpanded("live-casino")
-        ) {
+        if (currentPath.startsWith("/live-casino") && hash && !isMenuExpanded("live-casino")) {
             setExpandedMenus((prev) => [...prev, "live-casino"]);
         }
 
@@ -94,7 +90,6 @@ const MobileFooter = ({
         } else if (item.href !== "#") {
             navigate(item.href);
         }
-        // Close sidebar after navigation
         if (isSidebarExpanded) {
             toggleSidebar();
         }
@@ -105,10 +100,8 @@ const MobileFooter = ({
         const hash = location.hash;
 
         if (item.href === currentPath) return true;
-        if (item.href.includes("#"))
-            return location.pathname + location.hash === item.href;
-        if (item.id === "profile" && currentPath.startsWith("/profile"))
-            return true;
+        if (item.href.includes("#")) return location.pathname + location.hash === item.href;
+        if (item.id === "profile" && currentPath.startsWith("/profile")) return true;
         return false;
     };
 
@@ -117,7 +110,10 @@ const MobileFooter = ({
         return location.pathname === href;
     };
 
+    const showFullMenu = isSlotsOnly === "false" || isSlotsOnly === false;
+
     const menuItems = [
+        // ... (same as before - Casino, Live Casino, Sports, Profile, Support, Logout)
         {
             id: "casino",
             name: "Casino",
@@ -132,9 +128,8 @@ const MobileFooter = ({
                 { name: "Ruletas", href: "/casino#roulette" },
             ],
         },
-        ...(isSlotsOnly === "false"
-            ? []
-            : [
+        ...(showFullMenu
+            ? [
                 {
                     id: "live-casino",
                     name: "Casino en Vivo",
@@ -152,20 +147,19 @@ const MobileFooter = ({
                         { name: "En Vivo", href: "/live-sports" },
                     ],
                 },
-            ]),
+            ]
+            : []),
+        // ... Profile, Support, Logout (same as before)
         ...(isLoggedIn
             ? [
                 {
                     id: "profile",
                     name: "Cuenta",
                     image: ImgProfile,
-                    href: "/profile/detail",
+                    href: "/profile",
                     subItems: [
                         { name: "Ajustes de Cuenta", href: "/profile/detail" },
-                        {
-                            name: "Historial de transacciones",
-                            href: "/profile/transaction",
-                        },
+                        { name: "Historial de transacciones", href: "/profile/transaction" },
                         { name: "Historial de Casino", href: "/profile/history" },
                     ],
                 },
@@ -215,52 +209,39 @@ const MobileFooter = ({
                         </span>
                     </button>
 
-                    {/* Sports */}
-                    {isSlotsOnly === "false" && (
+                    {/* Live Casino & Sports */}
+                    {showFullMenu && (
                         <>
-                            <button
-                                onClick={handleNavigation({ href: "/sports" })}
-                                className="group relative flex flex-1 flex-col items-center gap-1 px-2 py-1 text-primary-50"
-                            >
-                                <div className="p-1">
-                                    <img
-                                        src={ImgMobileSports}
-                                        alt="Deportes"
-                                        className="h-5 w-5"
-                                    />
-                                </div>
-                                <span className="truncate text-center text-[0.625rem] font-bold leading-normal opacity-50 group-hover:opacity-100 group-focus:opacity-100">
-                                    Deportes
-                                </span>
-                            </button>
                             <button
                                 onClick={handleNavigation({ href: "/live-casino" })}
                                 className="group relative flex flex-1 flex-col items-center gap-1 px-2 py-1 text-primary-50"
                             >
                                 <div className="p-1">
-                                    <img
-                                        src={ImgMobileLiveCasino}
-                                        alt="Casino en vivo"
-                                        className="h-5 w-5"
-                                    />
+                                    <img src={ImgMobileLiveCasino} alt="Casino en vivo" className="h-5 w-5" />
                                 </div>
                                 <span className="truncate text-center text-[0.625rem] font-bold leading-normal opacity-50 group-hover:opacity-100 group-focus:opacity-100">
                                     Casino en vivo
                                 </span>
                             </button>
+
+                            <button
+                                onClick={handleNavigation({ href: "/sports" })}
+                                className="group relative flex flex-1 flex-col items-center gap-1 px-2 py-1 text-primary-50"
+                            >
+                                <div className="p-1">
+                                    <img src={ImgMobileSports} alt="Deportes" className="h-5 w-5" />
+                                </div>
+                                <span className="truncate text-center text-[0.625rem] font-bold leading-normal opacity-50 group-hover:opacity-100 group-focus:opacity-100">
+                                    Deportes
+                                </span>
+                            </button>
                         </>
                     )}
 
-                    {/* Search (placeholder) */}
+                    {/* Search */}
                     <button className="group relative flex flex-1 flex-col items-center gap-1 px-2 py-1 text-primary-50">
                         <div className="p-1">
-                            <svg
-                                className="h-5 w-5"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                            >
+                            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <circle cx="11" cy="11" r="8" />
                                 <path d="m21 21-4.35-4.35" />
                             </svg>
@@ -273,21 +254,17 @@ const MobileFooter = ({
                     {/* Divider */}
                     <div className="h-full w-px bg-primary-50/10" />
 
-                    {/* Menu Button - Opens Sidebar */}
+                    {/* Menu Button - Changes to Close Icon when open */}
                     <button
                         onClick={toggleSidebar}
                         className="group relative flex flex-1 flex-col items-center gap-1 px-2 py-1 text-primary-50"
                     >
                         <div className="p-1">
-                            <svg
+                            <img
+                                src={isSidebarExpanded ? ImgClose : ImgMenu}
+                                alt={isSidebarExpanded ? "Cerrar menú" : "Abrir menú"}
                                 className="h-5 w-5"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                            >
-                                <path d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
+                            />
                         </div>
                         <span className="truncate text-center text-[0.625rem] font-bold leading-normal opacity-50 group-hover:opacity-100 group-focus:opacity-100">
                             Menú
@@ -299,87 +276,64 @@ const MobileFooter = ({
             {/* Mobile Sidebar Overlay */}
             {isSidebarExpanded && (
                 <>
-                    {/* Backdrop */}
-                    <div
-                        className="fixed inset-0 z-40 bg-black/50"
-                        onClick={toggleSidebar}
-                    />
+                    <div className="fixed inset-0 z-40 bg-black/50" onClick={toggleSidebar} />
 
-                    {/* Sidebar Panel */}
                     <aside className="bg-primary-900 text-primary-50 border-theme-secondary/10 flex h-full flex-col justify-between gap-4 border-r text-base [grid-area:_nav] fixed left-0 right-0 top-0 z-[100] max-h-[calc(100dvh-3.25rem)] min-h-[calc(100dvh-3.25rem)] lg:max-w-[15rem] w-full translate-x-0">
                         <nav className="flex flex-col gap-2 p-4">
-                            {menuItems.map((item) => {
-                                const isActive = isMenuActive(item);
-
-                                return (
-                                    <div key={item.id} className="relative">
-                                        <div className="flex flex-col gap-2 rounded-2xl border border-theme-secondary/10 p-0 hover:border-theme-secondary/20 hover:bg-theme-secondary/[0.02]">
-                                            <div className="flex w-full flex-col rounded-2xl">
-                                                <div
-                                                    className="flex items-center justify-between gap-2 pr-4"
-                                                    {...(item.subItems.length > 0
-                                                        ? { onClick: () => toggleMenu(item.id) }
-                                                        : {})}
+                            {menuItems.map((item) => (
+                                // ... (same sidebar content as before)
+                                <div key={item.id} className="relative">
+                                    <div className="flex flex-col gap-2 rounded-2xl border border-theme-secondary/10 p-0 hover:border-theme-secondary/20 hover:bg-theme-secondary/[0.02]">
+                                        <div className="flex w-full flex-col rounded-2xl">
+                                            <div
+                                                className="flex items-center justify-between gap-2 pr-4"
+                                                {...(item.subItems.length > 0 ? { onClick: () => toggleMenu(item.id) } : {})}
+                                            >
+                                                <button
+                                                    onClick={handleNavigation(item)}
+                                                    className="flex flex-1 items-center gap-4 py-4 pl-4 text-sm font-bold"
                                                 >
-                                                    <button
-                                                        onClick={handleNavigation(item)}
-                                                        className="flex flex-1 items-center gap-4 py-4 pl-4 text-sm font-bold"
+                                                    <img src={item.image} alt={item.name} className="h-5 w-5" />
+                                                    <span className="uppercase text-theme-secondary-50">{item.name}</span>
+                                                </button>
+
+                                                {item.subItems.length > 0 && (
+                                                    <svg
+                                                        className={`h-6 w-6 rounded p-1 text-theme-secondary transition-transform duration-200 bg-theme-secondary-300/10 ${isMenuExpanded(item.id) ? "rotate-180" : ""}`}
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        strokeWidth="2"
                                                     >
-                                                        <img
-                                                            src={item.image}
-                                                            alt={item.name}
-                                                            className="h-5 w-5"
-                                                        />
-                                                        <span className="uppercase text-theme-secondary-50">
-                                                            {item.name}
-                                                        </span>
-                                                    </button>
-
-                                                    {item.subItems.length > 0 && (
-                                                        <svg
-                                                            className={`h-6 w-6 rounded p-1 text-theme-secondary transition-transform duration-200 bg-theme-secondary-300/10 ${isMenuExpanded(item.id) ? "rotate-180" : ""
-                                                                }`}
-                                                            viewBox="0 0 24 24"
-                                                            fill="none"
-                                                            stroke="currentColor"
-                                                            strokeWidth="2"
-                                                        >
-                                                            <path d="m6 9 6 6 6-6" />
-                                                        </svg>
-                                                    )}
-                                                </div>
-
-                                                {item.subItems.length > 0 &&
-                                                    isMenuExpanded(item.id) && (
-                                                        <div className="pb-2">
-                                                            <div className="flex flex-col gap-1 px-2">
-                                                                {item.subItems.map((sub) => (
-                                                                    <button
-                                                                        key={sub.href}
-                                                                        onClick={handleNavigation({
-                                                                            href: sub.href,
-                                                                        })}
-                                                                        className={`flex w-full items-center gap-2 rounded-xl px-4 py-3 text-left text-base font-normal text-white hover:bg-theme-secondary/5 lg:text-sm ${isActiveSubmenu(sub.href)
-                                                                                ? "bg-theme-secondary/10 text-theme-secondary"
-                                                                                : ""
-                                                                            }`}
-                                                                    >
-                                                                        <span>{sub.name}</span>
-                                                                        {sub.name === "Hot" && (
-                                                                            <span className="rounded-full bg-theme-secondary px-1.5 py-0.5 text-[0.625rem] font-semibold text-dark-grey-900">
-                                                                                POPULARES
-                                                                            </span>
-                                                                        )}
-                                                                    </button>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    )}
+                                                        <path d="m6 9 6 6 6-6" />
+                                                    </svg>
+                                                )}
                                             </div>
+
+                                            {item.subItems.length > 0 && isMenuExpanded(item.id) && (
+                                                <div className="pb-2">
+                                                    <div className="flex flex-col gap-1 px-2">
+                                                        {item.subItems.map((sub) => (
+                                                            <button
+                                                                key={sub.href}
+                                                                onClick={handleNavigation({ href: sub.href })}
+                                                                className={`flex w-full items-center gap-2 rounded-xl px-4 py-3 text-left text-base font-normal text-white hover:bg-theme-secondary/5 lg:text-sm ${isActiveSubmenu(sub.href) ? "bg-theme-secondary/10 text-theme-secondary" : ""}`}
+                                                            >
+                                                                <span>{sub.name}</span>
+                                                                {sub.name === "Hot" && (
+                                                                    <span className="rounded-full bg-theme-secondary px-1.5 py-0.5 text-[0.625rem] font-semibold text-dark-grey-900">
+                                                                        POPULARES
+                                                                    </span>
+                                                                )}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
-                                );
-                            })}
+                                </div>
+                            ))}
                         </nav>
                     </aside>
                 </>

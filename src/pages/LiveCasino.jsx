@@ -44,7 +44,6 @@ const LiveCasino = () => {
   const [txtSearch, setTxtSearch] = useState("");
   const [searchDelayTimer, setSearchDelayTimer] = useState();
   const [shouldShowGameModal, setShouldShowGameModal] = useState(false);
-  const [mobileShowMore, setMobileShowMore] = useState(false);
   const [isSingleCategoryView, setIsSingleCategoryView] = useState(false);
   const refGameModal = useRef();
   const location = useLocation();
@@ -380,9 +379,6 @@ const LiveCasino = () => {
         setSelectedCategoryIndex(providerIndex !== -1 ? providerIndex : index);
         fetchContent(provider, provider.id, provider.table_name, providerIndex !== -1 ? providerIndex : index, true);
         lastLoadedCategoryRef.current = provider.code;
-        if (isMobile) {
-          setMobileShowMore(true);
-        }
       }
     } else if (!provider && categories.length > 0) {
       const firstCategory = categories[0];
@@ -531,7 +527,6 @@ const LiveCasino = () => {
                                       provider={activeCategory?.name || 'Casino'}
                                       title={game.name}
                                       imageSrc={game.image_local !== null ? contextData.cdnUrl + game.image_local : game.image_url}
-                                      mobileShowMore={mobileShowMore}
                                       onClick={() => (isLogin ? launchGame(game, "slot", "tab") : handleLoginClick())}
                                     />
                                   </div>
@@ -635,7 +630,6 @@ const LiveCasino = () => {
                                     provider={activeCategory?.name || 'Casino'}
                                     title={game.name}
                                     imageSrc={game.image_local !== null ? contextData.cdnUrl + game.image_local : game.image_url}
-                                    mobileShowMore={mobileShowMore}
                                     onClick={() => (isLogin ? launchGame(game, "slot", "tab") : handleLoginClick())}
                                   />
                                 ))}

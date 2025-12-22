@@ -47,7 +47,6 @@ const Casino = () => {
   const [txtSearch, setTxtSearch] = useState("");
   const [searchDelayTimer, setSearchDelayTimer] = useState();
   const [shouldShowGameModal, setShouldShowGameModal] = useState(false);
-  const [mobileShowMore, setMobileShowMore] = useState(false);
   const refGameModal = useRef();
   const location = useLocation();
   const searchRef = useRef(null);
@@ -274,9 +273,6 @@ const Casino = () => {
     if (categories.length > 0 && provider) {
       setActiveCategory(provider);
       fetchContent(provider, provider.id, provider.table_name, index, true);
-      if (isMobile) {
-        setMobileShowMore(true);
-      }
     } else if (!provider && categories.length > 0) {
       const firstCategory = categories[0];
       setActiveCategory(firstCategory);
@@ -448,7 +444,6 @@ const Casino = () => {
                                       provider={activeCategory?.name || 'Casino'}
                                       title={game.name}
                                       imageSrc={game.image_local !== null ? contextData.cdnUrl + game.image_local : game.image_url}
-                                      mobileShowMore={mobileShowMore}
                                       onClick={() => (isLogin ? launchGame(game, "slot", "tab") : handleLoginClick())}
                                     />
                                   </div>
@@ -530,7 +525,6 @@ const Casino = () => {
                                     provider={activeCategory?.name || 'Casino'}
                                     title={game.name}
                                     imageSrc={game.image_local !== null ? contextData.cdnUrl + game.image_local : game.image_url}
-                                    mobileShowMore={mobileShowMore}
                                     onClick={() => (isLogin ? launchGame(game, "slot", "tab") : handleLoginClick())}
                                   />
                                 ))}
