@@ -171,7 +171,9 @@ const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handl
                     image: ImgPhone,
                     href: "#",
                     subItems: [],
-                    action: () => openSupportModal(true), // Direct action
+                    action: () => {
+                        openSupportModal(true);
+                    },
                 },
             ]
             : []),
