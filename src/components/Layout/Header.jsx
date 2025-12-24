@@ -4,11 +4,8 @@ import { LayoutContext } from "./LayoutContext";
 import { AppContext } from "../../AppContext";
 import SearchInput from "../SearchInput";
 import { callApi } from "../../utils/Utils";
-import ImgLogo from "/src/assets/svg/logo-desktop.svg";
-import ImgMobileLogo from "/src/assets/svg/logo-mobile.svg";
 import ImgCloseMenu from "/src/assets/svg/close-menu.svg";
 import ImgOpenMenu from "/src/assets/svg/open-menu.svg";
-import ImgSearch from "/src/assets/svg/search.svg";
 import ImgSupport from "/src/assets/svg/support-black.svg";
 
 const Header = ({
@@ -32,7 +29,7 @@ const Header = ({
         (result.content || []).forEach((element) => {
             element.imageDataSrc = element.image_local !== null ? contextData.cdnUrl + element.image_local : element.image_url;
         });
-    };    
+    };
 
     const search = (e) => {
         let keyword = e.target.value;
@@ -108,7 +105,15 @@ const Header = ({
                     }
 
                     <a onClick={() => navigate("/")} className="block lg:mr-8 cursor-pointer" title="Logo">
-                        <img src={isMobile ? ImgMobileLogo : ImgLogo} alt="Logo" />
+                        <svg width="120" height="50" viewBox="0 0 120 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <style>
+                                    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+                                </style>
+                            </defs>
+                            <text x="10" y="33" fontFamily="'Bebas Neue', Arial Black, sans-serif" fontStyle={"italic"} fontSize="20" fontWeight="bold" fill="white" letterSpacing="2">TERE</text>
+                            <text x="50" y="33" fontFamily="'Bebas Neue', Arial Black, sans-serif" fontStyle={"italic"} fontSize="20" fontWeight="bold" fill="#F5C20A" letterSpacing="2">REBET</text>
+                        </svg>
                     </a>
                 </div>
 
