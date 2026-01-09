@@ -22,7 +22,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess, isMobile }) => {
         let body = {
             username: username,
             password: password,
-            site_label: "main",
+            site_label: "tererebet",
         };
 
         callApi(
@@ -83,7 +83,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess, isMobile }) => {
                         <div className="relative lg:h-full lg:basis-1/2">
                             <picture className="contents">
                                 <img
-                                    className="h-full w-full object-cover lg:absolute lg:rounded-bl-3xl lg:rounded-tl-3xl"
+                                    className="h-full w-full object-fill lg:absolute lg:rounded-bl-3xl lg:rounded-tl-3xl"
                                     src={isMobile ? ImgMobileLogin : ImgLogin}
                                     alt="Login background"
                                     loading="lazy"
