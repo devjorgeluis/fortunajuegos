@@ -22,6 +22,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess, isMobile }) => {
         let body = {
             username: username,
             password: password,
+            site_label: "fortunavip2",
         };
 
         callApi(
@@ -45,6 +46,8 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess, isMobile }) => {
             setTimeout(() => {
                 onClose();
             }, 1000);
+        } else if (result.status === "country") {
+            setErrorMsg(result.message);
         } else {
             setErrorMsg("Nombre de usuario y contraseña no válidos");
         }
