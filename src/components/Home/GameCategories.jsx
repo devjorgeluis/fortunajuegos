@@ -36,7 +36,7 @@ const GameCategories = (props) => {
 
             <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
                 {props.categories.map((category, index) => (
-                    <div key={`category + ${index}`}>
+                    <div key={`category + ${index}`} onClick={() => handleCategoryClick(category, index)}>
                         <a
                             className="group relative flex flex-col gap-4 hover:shadow-games-tile-hover overflow-hidden rounded-3xl"
                             title={category.name}
@@ -62,7 +62,7 @@ const GameCategories = (props) => {
                                     />
                                 </picture>
 
-                                <span onClick={() => handleCategoryClick(category, index)} className="cursor-pointer absolute bottom-6 left-6 inline-flex items-center gap-0.5 rounded-md bg-theme-secondary px-2 py-1 text-sm font-normal !leading-tight text-dark-grey-900">
+                                <span className="cursor-pointer absolute bottom-6 left-6 inline-flex items-center gap-0.5 rounded-md bg-theme-secondary px-2 py-1 text-sm font-normal !leading-tight text-dark-grey-900">
                                     <span>Ver todo</span>
                                 </span>
                             </div>
