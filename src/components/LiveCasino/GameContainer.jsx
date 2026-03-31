@@ -3,7 +3,7 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import { AppContext } from '../../AppContext';
 import ImgLogoTransparent from "/src/assets/svg/logo-transparent.svg";
 
-const GameContainer = ({ games, title, link, onGameClick }) => {
+const GameContainer = ({ games, title, link, onGameClick, loadMoreContent }) => {
     const { contextData } = useContext(AppContext);
     const navigate = useNavigate();
     const [visibleCount, setVisibleCount] = useState(10);
@@ -60,7 +60,7 @@ const GameContainer = ({ games, title, link, onGameClick }) => {
                 </h2>
                 <a
                     className="cursor-pointer aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full text-ellipsis ring-0 focus-visible:outline-0 font-bold rounded-lg text-base gap-3 px-4 py-3 text-theme-secondary-500 bg-theme-secondary-500/10 disabled:bg-theme-secondary-500/10 disabled:text-theme-secondary-500 disabled:opacity-30 focus-visible:ring-theme-secondary-500 focus-visible:ring-2 focus-visible:ring-inset focus:outline-theme-secondary-500/10 focus:bg-theme-secondary-500/20 focus:outline focus:outline-4 hover:bg-theme-secondary-500/20 inline-flex items-center justify-center min-h-12"
-                    onClick={() => navigate(link)}
+                    onClick={loadMoreContent}
                 >
                     Ver todo
                 </a>
@@ -129,7 +129,7 @@ const GameContainer = ({ games, title, link, onGameClick }) => {
                         <button
                             type="button"
                             onClick={handleLoadMore}
-                            className="aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full text-ellipsis focus-visible:outline-0 font-bold rounded-lg text-base gap-3 px-4 py-3 text-theme-secondary-500 bg-transparent ring-1 ring-inset ring-current disabled:ring-theme-secondary-500 disabled:bg-transparent disabled:opacity-30 focus-visible:ring-theme-secondary-500 focus-visible:ring-2 focus:outline-theme-secondary-500/20 focus:bg-theme-secondary-500/10 focus:outline focus:outline-4 hover:bg-theme-secondary-500/10 inline-flex items-center justify-center w-full sm:absolute sm:left-1/2 sm:max-w-[15.875rem] sm:-translate-x-1/2"
+                            className={`aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed text-ellipsis focus-visible:outline-0 font-bold rounded-lg text-base gap-3 px-4 py-3 text-theme-secondary-500 bg-transparent ring-1 ring-inset ring-current disabled:ring-theme-secondary-500 disabled:bg-transparent disabled:opacity-30 focus-visible:ring-theme-secondary-500 focus-visible:ring-2 focus:outline-theme-secondary-500/20 focus:bg-theme-secondary-500/10 focus:outline focus:outline-4 hover:bg-theme-secondary-500/10 inline-flex items-center justify-center w-full sm:absolute sm:left-1/2 sm:max-w-[15.875rem] sm:-translate-x-1/2 ${showBackBtn ? "max-w-fit" : "max-w-full"}`}
                         >
                             Cargar más
                         </button>
