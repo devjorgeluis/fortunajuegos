@@ -9,24 +9,25 @@ const FullDivLoading = ({ show = false }) => {
       setIsVisible(true);
       setProgress(0);
 
-      // Simulate loading: fast to 90%
-      const timer1 = setTimeout(() => setProgress(70), 100);
-      const timer2 = setTimeout(() => setProgress(90), 400);
+      const timer1 = setTimeout(() => setProgress(70), 120);
+      const timer2 = setTimeout(() => setProgress(92), 1800);
+      const timer3 = setTimeout(() => setProgress(98), 4800);
 
-      // Complete when game loads (you'll trigger hide externally)
       return () => {
         clearTimeout(timer1);
         clearTimeout(timer2);
+        clearTimeout(timer3);
       };
     } else {
-      // Complete animation then hide
       if (isVisible) {
         setProgress(100);
-        const timer = setTimeout(() => {
+
+        const hideTimer = setTimeout(() => {
           setIsVisible(false);
           setProgress(0);
-        }, 400); // match fade-out duration
-        return () => clearTimeout(timer);
+        }, 600);
+
+        return () => clearTimeout(hideTimer);
       }
     }
   }, [show]);
@@ -35,23 +36,25 @@ const FullDivLoading = ({ show = false }) => {
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 z-[999999] pointer-events-none"
+      className="fixed left-0 right-0 top-0 z-[999999] pointer-events-none"
       style={{
         height: "3px",
-        background: "rgba(179, 113, 255, 0.2)",
         overflow: "hidden",
+        zIndex: 999999,
       }}
     >
       <div
         style={{
           height: "100%",
           width: "100%",
-          background: "rgb(179, 113, 255)",
-          transform: `translateX(-${100 - progress}%)`,
-          transition: progress === 100 
-            ? "transform 0.3s ease-out, opacity 0.4s ease-out 0.3s" 
-            : "transform 0.4s cubic-bezier(0.2, 0.8, 0.4, 1)",
-          opacity: progress === 100 ? 0 : 1,
+          zIndex: 999999,
+          background: "0% 0% / 0% rgb(179, 113, 255)",
+          transform: `translateX(-${100 - Math.min(progress, 100)}%)`,
+          transition:
+            progress >= 100
+              ? "transform 0.4s ease-out, opacity 0.5s ease-out 0.1s"
+              : "transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)",
+          opacity: progress >= 100 ? 0 : 1,
           transformOrigin: "left center",
         }}
       />

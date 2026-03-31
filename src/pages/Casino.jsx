@@ -440,7 +440,7 @@ const Casino = () => {
 
                             <div className="mb-6 grid grid-cols-12 gap-4 sm:mb-10 sm:gap-2.5 lg:gap-6">
                               {games.map((game) => (
-                                <div className="col-span-6 sm:col-span-3">
+                                <div className="col-span-6 sm:col-span-3" key={"live-popular1" + game.id}>
                                   <GameCard
                                     key={"live-popular" + game.id}
                                     id={game.id}
@@ -516,10 +516,7 @@ const Casino = () => {
                           <div className="[grid-area:content]">
                             <div
                               className="mb-6 grid gap-x-2 gap-y-8 sm:mb-12 lg:gap-x-4"
-                              style={{
-                                '--games-list-grid-cols': 6,
-                                gridTemplateColumns: 'repeat(var(--games-list-grid-cols, 5), minmax(0, 1fr))'
-                              }}
+                              style={{ '--games-list-grid-cols': isMobile ? 2 : 6, gridTemplateColumns: 'repeat(var(--games-list-grid-cols, 5), minmax(0, 1fr))' }}
                             >
                               {games.map((game) => (
                                 <GameCard

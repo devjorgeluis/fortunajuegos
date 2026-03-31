@@ -35,7 +35,7 @@ const DropWins = () => {
                                                 <img className="w-full max-w-none transition-transform group-hover:scale-105 lg:absolute absolute inset-0 h-full rounded-t-3xl object-cover" src={ImgMobileDropWins} loading="eager" fetchPriority="high" data-allow-mismatch="attribute" />
                                             </picture>
                                             </div>
-                                            <a className="aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full flex-shrink-0 text-ellipsis ring-0 focus:outline-none focus-visible:outline-0 font-bold rounded-lg text-base gap-3 px-4 py-3 text-theme-secondary-500 disabled:text-theme-secondary-500 disabled:opacity-30 focus:text-theme-secondary-600 hover:text-theme-secondary-600 inline-flex items-center justify-center absolute inset-0 z-[1] opacity-0" href="/casino" as="button" type="button" disabled="false" exact="false" exactquery="false" exacthash="false">
+                                            <a className="aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full flex-shrink-0 text-ellipsis ring-0 focus:outline-none focus-visible:outline-0 font-bold rounded-lg text-base gap-3 px-4 py-3 text-theme-secondary-500 disabled:text-theme-secondary-500 disabled:opacity-30 focus:text-theme-secondary-600 hover:text-theme-secondary-600 inline-flex items-center justify-center absolute inset-0 z-[1] opacity-0" href="/casino" as="button" type="button">
                                                 <span className="">Leer Más</span>
                                             </a>
                                         </div>

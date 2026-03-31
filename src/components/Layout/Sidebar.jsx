@@ -127,16 +127,16 @@ const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handl
                 { name: "Ruletas", href: "/casino#roulette" },
             ],
         },
-        {
-            id: "live-casino",
-            name: "Casino en Vivo",
-            image: ImgLiveCasino,
-            href: "/live-casino",
-            subItems: liveCasinoMenus,
-        },
         ...(isSlotsOnlyMode
             ? []
             : [
+                {
+                    id: "live-casino",
+                    name: "Casino en Vivo",
+                    image: ImgLiveCasino,
+                    href: "/live-casino",
+                    subItems: liveCasinoMenus,
+                },
                 {
                     id: "sports",
                     name: "Deportes",

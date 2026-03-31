@@ -115,11 +115,16 @@ const Home = () => {
     setCategories([]);
     setGames([]);
     setIsLoadingGames(true);
+    setShowFullDivLoading(true);
     callApi(contextData, "GET", "/get-page?page=" + page, (result) => callbackGetPage(result, page), null);
   };
 
   const callbackGetPage = (result, page) => {
-    if (result.status === 500 || result.status === 422) return;
+    if (result.status === 500 || result.status === 422) {
+      setIsLoadingGames(false);
+      setShowFullDivLoading(false);
+      return;
+    }
 
     setCategories(result.data.categories || []);
     setPageData(result.data);
@@ -136,6 +141,7 @@ const Home = () => {
     }
 
     setIsLoadingGames(false);
+    setShowFullDivLoading(false);
   };
 
   const fetchContent = (category, categoryId, tableName, categoryIndex, reset = false) => {
@@ -146,6 +152,7 @@ const Home = () => {
 
     setSelectedCategoryIndex(categoryIndex);
     setIsLoadingGames(true);
+    setShowFullDivLoading(true);
 
     const groupCode = pageData.page_group_code || "default_pages_home";
 
@@ -159,7 +166,11 @@ const Home = () => {
   };
 
   const callbackFetchContent = (result) => {
-    if (result.status === 500 || result.status === 422) return;
+    if (result.status === 500 || result.status === 422) {
+      setIsLoadingGames(false);
+      setShowFullDivLoading(false);
+      return;
+    }
 
     configureImageSrc(result);
 
@@ -171,6 +182,7 @@ const Home = () => {
 
     pageCurrent += 1;
     setIsLoadingGames(false);
+    setShowFullDivLoading(false);
   };
 
   const configureImageSrc = (result) => {
@@ -311,12 +323,15 @@ const Home = () => {
                           categories={tags}
                           selectedCategoryIndex={selectedCategoryIndex}
                           onCategoryClick={(tag, _id, _table, index) => {
+                            setSelectedProvider(null);
+                            setSelectedCategoryIndex(index);
+                            setShowFullDivLoading(true);
+
                             if (window.location.hash !== `#${tag.code}`) {
                               window.location.hash = `#${tag.code}`;
-                            } else {
-                              setSelectedCategoryIndex(index);
-                              getPage(tag.code);
                             }
+
+                            getPage(tag.code);
                           }}
                           onCategorySelect={() => setSelectedProvider(null)}
                           isMobile={isMobile}
